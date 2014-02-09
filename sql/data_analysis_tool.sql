@@ -18,7 +18,7 @@ CREATE  TABLE IF NOT EXISTS `hugo_oauth`.`user_roles` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `user_role` VARCHAR(45) NOT NULL ,
   PRIMARY KEY (`id`) )
-ENGINE = InnoDB;
+  ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
@@ -37,11 +37,11 @@ CREATE  TABLE IF NOT EXISTS `hugo_oauth`.`users` (
   INDEX `user_role_idx` (`user_role` ASC) ,
   UNIQUE INDEX `user_logon_UNIQUE` (`user_logon` ASC) ,
   CONSTRAINT `user_role`
-    FOREIGN KEY (`user_role`)
-    REFERENCES `hugo_oauth`.`user_roles` (`id`)
+  FOREIGN KEY (`user_role`)
+  REFERENCES `hugo_oauth`.`user_roles` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+  ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
@@ -53,7 +53,7 @@ CREATE  TABLE IF NOT EXISTS `hugo_oauth`.`token_type` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `token_type` VARCHAR(45) NOT NULL ,
   PRIMARY KEY (`id`) )
-ENGINE = InnoDB;
+  ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
@@ -72,16 +72,16 @@ CREATE  TABLE IF NOT EXISTS `hugo_oauth`.`token` (
   INDEX `user_token_idx` (`user_id` ASC) ,
   INDEX `token_type_idx` (`type` ASC) ,
   CONSTRAINT `user_token`
-    FOREIGN KEY (`user_id`)
-    REFERENCES `hugo_oauth`.`users` (`id`)
+  FOREIGN KEY (`user_id`)
+  REFERENCES `hugo_oauth`.`users` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `token_type`
-    FOREIGN KEY (`type`)
-    REFERENCES `hugo_oauth`.`token_type` (`id`)
+  FOREIGN KEY (`type`)
+  REFERENCES `hugo_oauth`.`token_type` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+  ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
@@ -97,11 +97,11 @@ CREATE  TABLE IF NOT EXISTS `hugo_oauth`.`nonce` (
   PRIMARY KEY (`id`) ,
   INDEX `user_id_idx` (`user_id` ASC) ,
   CONSTRAINT `user_id`
-    FOREIGN KEY (`user_id`)
-    REFERENCES `hugo_oauth`.`users` (`id`)
+  FOREIGN KEY (`user_id`)
+  REFERENCES `hugo_oauth`.`users` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+  ENGINE = InnoDB;
 
 USE `hugo_reports`;
 
@@ -118,7 +118,7 @@ CREATE  TABLE IF NOT EXISTS `hugo_reports`.`clients` (
   `contact_phone` VARCHAR(45) NOT NULL ,
   `contact_email` VARCHAR(255) NULL ,
   PRIMARY KEY (`id`) )
-ENGINE = InnoDB;
+  ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
@@ -135,11 +135,11 @@ CREATE  TABLE IF NOT EXISTS `hugo_reports`.`report_metadata` (
   PRIMARY KEY (`report_id`) ,
   INDEX `report_client_idx` (`client_id` ASC) ,
   CONSTRAINT `report_client`
-    FOREIGN KEY (`client_id`)
-    REFERENCES `hugo_reports`.`clients` (`id`)
+  FOREIGN KEY (`client_id`)
+  REFERENCES `hugo_reports`.`clients` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+  ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
@@ -151,7 +151,7 @@ CREATE  TABLE IF NOT EXISTS `hugo_geography`.`lep` (
   `lep_code` VARCHAR(5) NOT NULL ,
   `lep_name` VARCHAR(255) NOT NULL ,
   PRIMARY KEY (`lep_code`) )
-ENGINE = InnoDB;
+  ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
@@ -163,7 +163,7 @@ CREATE  TABLE IF NOT EXISTS `hugo_geography`.`region` (
   `region_code` VARCHAR(5) NOT NULL ,
   `region_name` VARCHAR(255) NOT NULL ,
   PRIMARY KEY (`region_code`) )
-ENGINE = InnoDB;
+  ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
@@ -180,22 +180,28 @@ CREATE  TABLE IF NOT EXISTS `hugo_geography`.`local_authority` (
   INDEX `la_lep_idx` (`lep` ASC) ,
   INDEX `la_region_idx` (`region` ASC) ,
   CONSTRAINT `la_lep`
-    FOREIGN KEY (`lep`)
-    REFERENCES `hugo_geography`.`lep` (`lep_code`)
+  FOREIGN KEY (`lep`)
+  REFERENCES `hugo_geography`.`lep` (`lep_code`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `la_region`
-    FOREIGN KEY (`region`)
-    REFERENCES `hugo_geography`.`region` (`region_code`)
+  FOREIGN KEY (`region`)
+  REFERENCES `hugo_geography`.`region` (`region_code`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+  ENGINE = InnoDB;
 
-DROP USER 'hugo'@'%';
 CREATE USER 'hugo'@'%' IDENTIFIED BY 'D0ubl3th1nk!';
 GRANT ALL PRIVILEGES ON hugo_oauth.* TO 'hugo'@'%';
 GRANT ALL PRIVILEGES ON hugo_reports.* TO 'hugo'@'%';
 GRANT ALL PRIVILEGES ON hugo_geography.* TO 'hugo'@'%';
+GRANT SELECT ON information_schema.* to 'hugo'@'%';
+
+CREATE USER 'hugo'@'localhost' IDENTIFIED BY 'D0ubl3th1nk!';
+GRANT ALL PRIVILEGES ON hugo_oauth.* TO 'hugo'@'localhost';
+GRANT ALL PRIVILEGES ON hugo_reports.* TO 'hugo'@'localhost';
+GRANT ALL PRIVILEGES ON hugo_geography.* TO 'hugo'@'localhost';
+GRANT SELECT ON information_schema.* to 'hugo'@'localhost';
 
 FLUSH PRIVILEGES;
 
