@@ -193,13 +193,11 @@ CREATE USER 'hugo'@'%' IDENTIFIED BY 'D0ubl3th1nk!';
 GRANT ALL PRIVILEGES ON hugo_oauth.* TO 'hugo'@'%';
 GRANT ALL PRIVILEGES ON hugo_reports.* TO 'hugo'@'%';
 GRANT ALL PRIVILEGES ON hugo_geography.* TO 'hugo'@'%';
-GRANT SELECT ON information_schema.* to 'hugo'@'%';
 
 CREATE USER 'hugo'@'localhost' IDENTIFIED BY 'D0ubl3th1nk!';
 GRANT ALL PRIVILEGES ON hugo_oauth.* TO 'hugo'@'localhost';
 GRANT ALL PRIVILEGES ON hugo_reports.* TO 'hugo'@'localhost';
 GRANT ALL PRIVILEGES ON hugo_geography.* TO 'hugo'@'localhost';
-GRANT SELECT ON information_schema.* to 'hugo'@'localhost';
 
 FLUSH PRIVILEGES;
 
