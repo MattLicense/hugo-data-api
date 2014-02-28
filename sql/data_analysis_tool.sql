@@ -64,39 +64,18 @@ CREATE  TABLE IF NOT EXISTS `hugo_oauth`.`token` (
   `type` INT NOT NULL ,
   `user_id` INT NOT NULL ,
   `token` VARCHAR(255) NOT NULL ,
-  `callback_url` TEXT NULL ,
-  `verifier` VARCHAR(45) NULL ,
+  `scope` VARCHAR(45) NULL,
+  `expires` DATETIME NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `user_token_idx` (`user_id` ASC) ,
   INDEX `token_type_idx` (`type` ASC) ,
-  CONSTRAINT `user_token`
-  FOREIGN KEY (`user_id`)
+  CONSTRAINT unique_user_id UNIQUE (`user_id`) ,
+  CONSTRAINT `user_token` FOREIGN KEY (`user_id`)
   REFERENCES `hugo_oauth`.`users` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `token_type`
-  FOREIGN KEY (`type`)
+  CONSTRAINT `token_type` FOREIGN KEY (`type`)
   REFERENCES `hugo_oauth`.`token_type` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-  ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `hugo_oauth`.`nonce`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `hugo_oauth`.`nonce`;
-
-CREATE  TABLE IF NOT EXISTS `hugo_oauth`.`nonce` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `user_id` INT NOT NULL ,
-  `nonce` VARCHAR(255) NOT NULL ,
-  `timestamp` TIMESTAMP NOT NULL ,
-  PRIMARY KEY (`id`) ,
-  INDEX `user_id_idx` (`user_id` ASC) ,
-  CONSTRAINT `user_id`
-  FOREIGN KEY (`user_id`)
-  REFERENCES `hugo_oauth`.`users` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
   ENGINE = InnoDB;
@@ -172,13 +151,20 @@ DROP TABLE IF EXISTS `hugo_geography`.`local_authority`;
 CREATE  TABLE IF NOT EXISTS `hugo_geography`.`local_authority` (
   `la_code` VARCHAR(5) NOT NULL ,
   `la_name` VARCHAR(255) NOT NULL ,
-  `lep` VARCHAR(5) NULL ,
+  `lep_1` VARCHAR(5) NULL ,
+  `lep_2` VARCHAR(5) NULL ,
   `region` VARCHAR(5) NOT NULL ,
   PRIMARY KEY (`la_code`) ,
-  INDEX `la_lep_idx` (`lep` ASC) ,
-  INDEX `la_region_idx` (`region` ASC) ,
-  CONSTRAINT `la_lep`
-  FOREIGN KEY (`lep`)
+  INDEX `la_lep_1_idx` (`la_code`,`lep_1` ASC) ,
+  INDEX `la_lep_2_idx` (`la_code`,`lep_2` ASC) ,
+  INDEX `la_region_idx` (`la_code`,`region` ASC) ,
+  CONSTRAINT `la_lep_1`
+  FOREIGN KEY (`lep_1`)
+  REFERENCES `hugo_geography`.`lep` (`lep_code`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `la_lep_2`
+  FOREIGN KEY (`lep_2`)
   REFERENCES `hugo_geography`.`lep` (`lep_code`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
