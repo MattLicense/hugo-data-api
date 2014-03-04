@@ -3,7 +3,7 @@ USE `hugo_oauth`;
 INSERT INTO `user_roles` (`id`, `user_role`) VALUES ('1', 'editor'), ('2', 'administrator');
 INSERT INTO `token_type` (`id`, `token_type`) VALUES ('1', 'bearer');
 
-/* Test user based on Docs 8?
+/* Test user based on Docs */
 /* Password hash created via password_hash('secretPassword', PASSWORD_BCRYPT); */
 INSERT INTO `users` (`id`, `user_name`, `user_logon`, `user_secret`, `active`, `user_role`)
           VALUES    ('1', 'Anna Edwards', 'a.edwards', '$2y$10$Wd6D0PRfcs6I256zcfhr0ux7mjOOCDUvYEclIu.PD9oDFG2mr7216', true, '2');
