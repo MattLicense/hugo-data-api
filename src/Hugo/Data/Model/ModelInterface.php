@@ -16,6 +16,7 @@ use Hugo\Data\Storage\DataSource;
  */
 interface ModelInterface
 {
+
     /**
      * Constructor for model. Sets a DataSource to save to, and optional ID to retrieve old.
      *
@@ -25,7 +26,7 @@ interface ModelInterface
     public function __construct(DataSource $store, $id = null);
 
     /**
-     * Checks if the current model isn't saved (i.e. hasn't been created before or has been updated)
+     * Checks to see if the model has been saved in the database
      *
      * @return bool
      */
