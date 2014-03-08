@@ -12,8 +12,21 @@ use Hugo\Data\Storage\DataSource;
 
 interface DBInterface extends DataSource {
 
+    /**
+     * @param $dsn
+     * @return $this
+     */
     public function connect($dsn);
 
+    /**
+     * @param Query $query
+     * @return mixed
+     */
+    public function execute(Query $query);
+
+    /**
+     * @return $this
+     */
     public function close();
 
 } 
