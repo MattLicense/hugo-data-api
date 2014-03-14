@@ -42,7 +42,7 @@ interface ModelInterface
     /**
      * Deletes the model
      *
-     * @return mixed
+     * @return bool
      */
     public function delete();
 
