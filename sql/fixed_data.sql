@@ -6,7 +6,8 @@ INSERT INTO `token_type` (`id`, `token_type`) VALUES ('1', 'bearer');
 /* Test user based on Docs */
 /* Password hash created via password_hash('secretPassword', PASSWORD_BCRYPT); */
 INSERT INTO `users` (`id`, `user_name`, `user_logon`, `user_secret`, `active`, `user_role`)
-          VALUES    ('1', 'Anna Edwards', 'a.edwards', '$2y$10$Wd6D0PRfcs6I256zcfhr0ux7mjOOCDUvYEclIu.PD9oDFG2mr7216', true, '2');
+          VALUES    ('1', 'Anna Edwards', 'a.edwards', '$2y$10$Wd6D0PRfcs6I256zcfhr0ux7mjOOCDUvYEclIu.PD9oDFG2mr7216', true, '2'),
+                    ('2', 'John Scott', 'j.scott', '$2y$10$9gWHdvzFAepBFvx.Kki0k.82SS3eK6HLp..bnX7rkAUUjFizMe9Ny', true, '1');
 
 /**
  Geography data
@@ -418,4 +419,4 @@ VALUES	('11','Buckinghamshire',NULL,NULL,'J'),
         ('47UD','Redditch','LEP03','LEP29','F'),
         ('47UE','Worcester','LEP29',NULL,'F'),
         ('47UF','Wychavon','LEP29',NULL,'F'),
-('47UG','Wyre Forest','LEP03','LEP29','F');
+        ('47UG','Wyre Forest','LEP03','LEP29','F');
