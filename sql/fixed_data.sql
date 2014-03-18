@@ -9,6 +9,10 @@ INSERT INTO `users` (`id`, `user_name`, `user_logon`, `user_secret`, `active`, `
           VALUES    ('1', 'Anna Edwards', 'a.edwards', '$2y$10$Wd6D0PRfcs6I256zcfhr0ux7mjOOCDUvYEclIu.PD9oDFG2mr7216', true, '2'),
                     ('2', 'John Scott', 'j.scott', '$2y$10$9gWHdvzFAepBFvx.Kki0k.82SS3eK6HLp..bnX7rkAUUjFizMe9Ny', true, '1');
 
+USE `hugo_reports`;
+INSERT INTO `clients` (`id`, `client_name`, `client_website`, `contact_name`, `contact_email`, `contact_phone`)
+          VALUES      ('1', 'Sport England', 'http://www.sportengland.co.uk', 'John Smith', 'john@sportengland.co.uk', '07777777777');
+
 /**
  Geography data
  */
