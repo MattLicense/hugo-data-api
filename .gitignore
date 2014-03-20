@@ -164,6 +164,7 @@ pip-log.txt
 # Logs, cached results and PHPStorm files
 *.log
 *.json
+/logs
 /.idea
 /uploads
 /vendor
