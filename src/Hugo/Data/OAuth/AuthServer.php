@@ -86,7 +86,7 @@ class AuthServer {
         $authHeader = explode(' ', $request->headers->get("Authorization"));
 
         // token scope references controller sections
-        $pathArray = explode('/', trim($this->request->getPathInfo(), '/'));
+        $pathArray = explode('/', trim($request->getPathInfo(), '/'));
         $controller = array_shift($pathArray);  // first part of URI should be the controller
 
         switch(strtolower($authHeader[0])) {
@@ -116,7 +116,7 @@ class AuthServer {
 
     /**
      * @param Request $request
-     * @return Token\TokenTypeInterface
+     * @return Token\TokenTypeInterface | null
      * @throws \InvalidArgumentException
      */
     public function getTokenFromHeaders(Request $request)
@@ -137,7 +137,7 @@ class AuthServer {
             return $this->token;
         }
 
-        return false;
+        return null;
     }
 
     /**

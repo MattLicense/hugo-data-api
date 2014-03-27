@@ -7,7 +7,6 @@
  */
 
 namespace Hugo\Data\Routing;
-require_once(__DIR__."/../../../../vendor/autoload.php");
 
 use Symfony\Component\HttpFoundation\Response;
 

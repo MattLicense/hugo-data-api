@@ -7,7 +7,6 @@
  */
 
 namespace Hugo\Data\Storage;
-require_once(__DIR__."/../../../../vendor/autoload.php");
 
 class FileSystemTest extends \PHPUnit_Framework_TestCase {
 

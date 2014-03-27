@@ -7,14 +7,13 @@
  */
 
 namespace Hugo\Data\Application;
-require_once(__DIR__."/../../../../vendor/autoload.php");
 
 use Psr\Log\Test\LoggerInterfaceTest;
 
 class LoggerTest extends LoggerInterfaceTest {
 
-    private $logger;
-    private $store;
+    protected $logger;
+    protected $store;
 
     protected function setUp()
     {

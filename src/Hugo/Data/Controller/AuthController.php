@@ -8,6 +8,7 @@
 
 namespace Hugo\Data\Controller;
 
+use Hugo\Data\Exception\InvalidTokenException;
 use Hugo\Data\Model\User;
 use Hugo\Data\OAuth\AuthServer;
 use Hugo\Data\Storage\DB\MySQL;
@@ -57,6 +58,12 @@ class AuthController extends AbstractController {
         }
 
         $token = $authServer->getTokenFromHeaders($this->request);
+
+        if($token === null) {
+            $this->log->error("Token couldn't be retrieved from headers from IP: {ip]", ['ip' => $this->request->getClientIp()]);
+            throw new InvalidTokenException("Token could not be retrieved from headers, ensure Authorization header is correct", Constants::HTTP_FORBIDDEN);
+        }
+
         $tokenValue = $token->getToken();
 
         if(!$token->delete()) {
@@ -85,19 +92,7 @@ class AuthController extends AbstractController {
         }
 
         $user = new User(new MySQL(['db' => 'hugo_oauth', 'table' => 'users']));
-        $userName       = $this->request->request->get('user_name');
-        $userLogon      = $this->request->request->get('user_logon');
-        $userSecret     = password_hash($this->request->request->get('user_secret'), PASSWORD_BCRYPT);
-        $userRole       = $this->request->request->get('user_role');
-
-        // set the user characteristics
-        $user->set([
-            'user_name'     => $userName,
-            'user_logon'    => $userLogon,
-            'user_secret'   => $userSecret,
-            'user_role'     => $userRole,
-            'active'        => true
-        ]);
+        $user->processParameters($this->request->request);
 
         // make sure that the user has been saved to the database
         if(!$user->save()) {

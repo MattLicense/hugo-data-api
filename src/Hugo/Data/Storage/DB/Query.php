@@ -437,7 +437,7 @@ class Query {
      */
     private function prepareInsertQuery()
     {
-        return "INSERT INTO " . $this->table . " SET " . $this->prepareFieldValues();
+        return "INSERT INTO " . $this->table . " " . $this->prepareFieldValues();
     }
 
     /**
@@ -445,7 +445,7 @@ class Query {
      */
     private function prepareUpdateQuery()
     {
-        return "UPDATE " . $this->table . " SET " . $this->prepareFieldValues() . $this->prepareWhereConditions();
+        return "UPDATE " . $this->table . " " . $this->prepareFieldValues() . $this->prepareWhereConditions();
     }
 
     /**
@@ -531,7 +531,7 @@ class Query {
     /**
      *
      */
-    private function resetQuery()
+    public function resetQuery()
     {
         $this->type = null;
         $this->columns = [];

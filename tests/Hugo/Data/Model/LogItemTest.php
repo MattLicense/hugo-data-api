@@ -7,54 +7,84 @@
  */
 
 namespace Hugo\Data\Model;
-require_once(__DIR__."/../../../../vendor/autoload.php");
 
 class LogItemTest extends \PHPUnit_Framework_TestCase {
 
     protected $store;
 
-    protected $config = [
-        'level'     => 'warning',
-        'message'   => 'Warning message with context {context} given',
-        'context'   => ['context' => 'like this']
-    ];
-
-    public function testLogLevel()
+    /**
+     * @return array
+     */
+    public function logProvider()
     {
-        $logItem = new LogItem($this->store);
-        $logItem->set($this->config);
-
-        $this->assertEquals($this->config['level'], $logItem->getLogLevel());
+        return [
+            [
+                ['level' => 'warning','message' => 'Warning message with context {context} given','context' => ['context' => 'like this']],
+                'Warning message with context like this given'
+            ],
+            [
+                ['level' => 'emergency','message' => 'Emergency message without context', 'context' => []],
+                'Emergency message without context'
+            ],
+            [
+                ['level' => 'info','message' => 'Info message with {context} not given', 'context' => []],
+                'Info message with {context} not given'
+            ],
+            [
+                ['level' => 'debug','message' => 'Debug message with {context} given', 'context' => ['context' => 'some context']],
+                'Debug message with some context given'
+            ]
+        ];
     }
 
-    public function testLogMessage()
+    /**
+     * @dataProvider logProvider
+     */
+    public function testLogLevel($logArray, $expectedMessage)
     {
         $logItem = new LogItem($this->store);
-        $logItem->set($this->config);
+        $logItem->set($logArray);
 
-        $this->assertEquals('Warning message with context like this given', $logItem->getMessage());
+        $this->assertEquals($logArray['level'], $logItem->getLogLevel());
     }
 
-    public function testToArray()
+    /**
+     * @dataProvider logProvider
+     */
+    public function testLogMessage($logArray, $expectedMessage)
     {
         $logItem = new LogItem($this->store);
-        $logItem->set($this->config);
+        $logItem->set($logArray);
+
+        $this->assertEquals($expectedMessage, $logItem->getMessage());
+    }
+
+    /**
+     * @dataProvider logProvider
+     */
+    public function testToArray($logArray, $expectedMessage)
+    {
+        $logItem = new LogItem($this->store);
+        $logItem->set($logArray);
 
         $date = new \DateTime('now', new \DateTimeZone("Europe/London"));
         $expected = ['date' => $date->format('Y-m-d H:i:s'),
-                     'level' => 'WARNING',
-                     'message' => 'Warning message with context like this given'];
+                     'level' => strtoupper($logArray['level']),
+                     'message' => $expectedMessage];
 
         $this->assertEquals($expected, $logItem->toArray());
     }
 
-    public function testToString()
+    /**
+     * @dataProvider logProvider
+     */
+    public function testToString($logArray, $expectedMessage)
     {
         $logItem = new LogItem($this->store);
-        $logItem->set($this->config);
+        $logItem->set($logArray);
 
         $date = new \DateTime('now', new \DateTimeZone("Europe/London"));
-        $expected = $date->format('Y-m-d H:i:s') .' - WARNING - Warning message with context like this given';
+        $expected = $date->format('Y-m-d H:i:s') .' - ' . strtoupper($logArray['level']) . ' - ' . $expectedMessage;
 
         $this->assertEquals($expected, (string)$logItem);
     }

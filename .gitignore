@@ -162,6 +162,8 @@ pip-log.txt
 .DS_Store
 
 # Logs, cached results and PHPStorm files
+composer.lock
+composer.phar
 *.log
 *.json
 /logs

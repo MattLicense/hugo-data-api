@@ -7,8 +7,6 @@
  */
 
 namespace Hugo\Data\OAuth\Token;
-require_once(__DIR__."/../../../../../vendor/autoload.php");
-
 
 class BearerTest extends \PHPUnit_Framework_TestCase {
 
@@ -20,9 +18,11 @@ class BearerTest extends \PHPUnit_Framework_TestCase {
         $this->store = $this->getMockBuilder('\\Hugo\\Data\\Storage\\DB\\MySQL', ['create'])
                             ->disableOriginalConstructor()
                             ->getMock();
-        $this->user = $this->getMockBuilder('\\Hugo\\Data\\Model\\User', [''])
+        $this->user = $this->getMockBuilder('\\Hugo\\Data\\Model\\User')
                            ->disableOriginalConstructor()
                            ->getMock();
+
+        $this->user->expects($this->any())->method('__get')->will($this->returnValue(1));
 
         $this->store->expects($this->any())
                     ->method('create')
@@ -41,7 +41,7 @@ class BearerTest extends \PHPUnit_Framework_TestCase {
         $token->setUser($this->user);
 
         $this->assertTrue($token->generateToken());
-        $this->assertEquals(32, strlen($token->getToken()));
+        $this->assertEquals(48, strlen($token->getToken()));
         $date = new \DateTime('2 hours');
         $this->assertEquals($date->format('Y-m-d H:i:s'), $token->getExpiry());
     }
@@ -51,13 +51,12 @@ class BearerTest extends \PHPUnit_Framework_TestCase {
         $token = new Bearer($this->store);
         $token->setUser($this->user);
 
-
         $date = new \DateTime('2 hours');
         $this->assertTrue($token->generateToken());
 
         $tokenArray = $token->toArray();
-        $this->assertArrayHasKey('token_type', $tokenArray);
-        $this->assertEquals('1', $tokenArray['token_type']);
+        $this->assertArrayHasKey('type', $tokenArray);
+        $this->assertEquals('1', $tokenArray['type']);
 
         $this->assertArrayHasKey('token', $tokenArray);
 

@@ -80,6 +80,7 @@ class MySQL implements DBInterface
     {
         $this->log->info('Connecting to MySQL DB with DSN: {dsn}', ['dsn' => $dsn]);
         $this->pdo = new \PDO($dsn, $this->config['user'], $this->config['pass']);
+        $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         return $this;
     }
 
@@ -121,6 +122,8 @@ class MySQL implements DBInterface
         if(!$exec) {
             $this->log->error("INSERT query failed: {error}", ['error' => json_encode($statement->errorInfo())]);
         }
+
+        $model->set(['id' => $this->pdo->lastInsertId()]);
 
         return $exec;
     }
@@ -332,6 +335,10 @@ class MySQL implements DBInterface
         return implode($verb, $conditions);
     }
 
+    /**
+     * @param Query $query
+     * @return mixed
+     */
     public function execute(Query $query)
     {
         $statement = $this->pdo->exec($query->prepareQuery());
@@ -348,11 +355,25 @@ class MySQL implements DBInterface
         return $statement;
     }
 
+    /**
+     * @return string
+     */
+    public function getLatestId()
+    {
+        return $this->pdo->lastInsertId();
+    }
+
+    /**
+     * @return string
+     */
     public function getSchema()
     {
         return $this->config['db'];
     }
 
+    /**
+     * @return string
+     */
     public function getHost()
     {
         return $this->config['host'];

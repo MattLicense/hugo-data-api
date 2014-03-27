@@ -10,7 +10,6 @@ namespace Hugo\Data\OAuth\Token;
 
 use Hugo\Data\Model\User;
 use Hugo\Data\Storage\DataSource;
-use Hugo\Data\Model\ModelInterface;
 use Hugo\Data\Exception\InvalidTokenException;
 
 /**
@@ -72,7 +71,7 @@ class Bearer implements TokenTypeInterface {
      */
     public function generateToken()
     {
-        if(null === $this->_data['user']) {
+        if(null === $this->_data['user_id']) {
             throw new InvalidTokenException("No user assigned to token", 500);
         }
 
@@ -82,7 +81,7 @@ class Bearer implements TokenTypeInterface {
         $this->_data['scope'] = $this->user->user_role;
 
         // check if the user already has a token assigned
-        if($token = $this->store->read('token', ['id', 'user_id'], ['user_id' => $this->_data['user']])) {
+        if($token = $this->store->read('token', ['id', 'user_id'], ['user_id' => $this->_data['user_id']])) {
             $this->_data['id'] = $token['id'];
             return $this->store->update($this);
         }
@@ -163,7 +162,7 @@ class Bearer implements TokenTypeInterface {
     {
         // store both to use User characteristics in code, but only use ID when saving the token
         $this->user = $user;
-        $this->_data['user'] = $user->id;
+        $this->_data['user_id'] = $user->id;
         return $this; // allow for method chaining
     }
 
@@ -219,9 +218,9 @@ class Bearer implements TokenTypeInterface {
 
         return [
             'type'      => "1",   // Bearer
-            'user_id'   => $this->_data['user'],
+            'user_id'   => $this->_data['user_id'],
             'token'     => $this->_data['token'],
-            'scope'     => $this->scope[$this->_data['scope']],
+            'scope'     => $this->_data['scope'],
             'expires'   => $this->_data['expires']
         ];
     }
