@@ -76,9 +76,11 @@ class ReportController extends AbstractController {
         $report = new Report(new MySQL(['db' => 'hugo_reports', 'table' => 'report_metadata']));
         $report->processFile(
             $csv->openFile(),   // sends an \SplFileObject to be processed
-            ['id'           => $this->request->get('id'),
+            [
+                'id'           => $this->request->get('id'),
                 'client_id'    => $this->request->get('client_id'),
-                'report_about' => $this->request->get('report_about')]
+                'report_about' => $this->request->get('report_about')
+            ]
         );
 
         return new Response(json_encode($report->toArray() + ['report-data' => $report->getReportDataArray()], JSON_PRETTY_PRINT),
@@ -117,10 +119,10 @@ class ReportController extends AbstractController {
         }
 
         // Check to see if the metadata fields have been sent in the request, otherwise use the current value
-        $about = (bool)$this->request->request->get('report-about', false) ? $this->request->request->get('report-about') : $report->report_about;
-        $client = (bool)$this->request->request->get('client-id', false) ? $this->request->request->get('client-id') : $report->client_id;
-        $published = (bool)$this->request->request->get('published', false) ? $this->request->request->get('published') : $report->published;
-        $order = (bool)$this->request->request->get('report-order', false) ? $this->request->request->get('report-order') : $report->order;
+        $about = !is_null($this->request->request->get('report-about')) ? $this->request->request->get('report-about') : $report->report_about;
+        $client = !is_null($this->request->request->get('client-id')) ? $this->request->request->get('client-id') : $report->client_id;
+        $published = !is_null($this->request->request->get('published')) ? $this->request->request->get('published') : $report->published;
+        $order = !is_null($this->request->request->get('report-order')) ? $this->request->request->get('report-order') : $report->order;
 
         if(!$report->checkValidOrder($order)) {
             $this->log->error("Invalid order sent with PUT /report/");
