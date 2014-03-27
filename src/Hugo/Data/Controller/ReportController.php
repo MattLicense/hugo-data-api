@@ -66,6 +66,12 @@ class ReportController extends AbstractController {
         }
 
         $file = $this->request->files->get('csv');
+
+        if(is_null($file)) {
+            $this->log->error("No file uploaded using POST /report/");
+            throw new InvalidRequestException("No file uploaded using POST /report/", Constants::HTTP_UNSUPPORTED_MEDIA);
+        }
+
         $csv = $file->move('/media/vagrant/www/api.hugowolferton.co.uk/uploads/', $file->getClientOriginalName());
 
         if($csv->getExtension() != "csv") {
