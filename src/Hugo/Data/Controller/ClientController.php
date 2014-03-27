@@ -25,12 +25,6 @@ class ClientController extends AbstractController {
      */
     public function getIndex($id = null)
     {
-        $authServer = new AuthServer();
-        if(!$authServer->verifyRequest($this->request)) {
-            $this->log->error("Unauthorised request attempted from {ip}", ['ip' => $this->request->getClientIp()]);
-            throw new InvalidRequestException("Unauthorised access token, ensure Authorization header is correct", Constants::HTTP_FORBIDDEN);
-        }
-
         $store = new MySQL(['db' => 'hugo_reports', 'table' => 'client']);
 
         if(null == $id) {
