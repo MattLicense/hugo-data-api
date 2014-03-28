@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HW | Data API Docs</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" media="screen" href="css/normalize.css">
+    <link href='http://fonts.googleapis.com/css?family=Arvo' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" media="screen" href="css/hugo.css">
+    <link rel="stylesheet" media="screen" href="css/hljs/github.css">
+</head>
+<body>
+    <div class="left-bar">
+        <div class="menu">
+            <h1>Hugo<span>Wolferton</span></h1>
+            <h2>Data Analysis Tool API</h2>
+            <ul>
+                <li><a href="#getReports">GET /report/</a></li>
+                <li><a href="#getReportId">GET /report/{id}</a></li>
+                <li><a href="#getClient">GET /client/</a></li>
+                <li><a href="#getClientId">GET /client/{id}</a></li>
+                <li><a href="#postToken">POST /auth/token/</a></li>
+                <li><a href="#deleteToken">DELETE /auth/token/</a></li>
+                <li><a href="#postReport">POST /report/</a></li>
+                <li><a href="#putReport">PUT /report/{id}</a></li>
+                <li><a href="#deleteReport">DELETE /report/{id}</a></li>
+                <li><a href="#postClient">POST /client/</a></li>
+                <li><a href="#putClient">PUT /client/{id}</a></li>
+                <li><a href="#deleteClient">DELETE /client/{id}</a></li>
+                <li><a href="#postUser">POST /auth/user/</a></li>
+                <li><a href="#putUser">PUT /auth/user/{id}</a></li>
+                <li><a href="#deleteUser">DELETE /auth/user/{id}</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="content">
+        <section class="method">
+            <h2 id="getReports">GET /report/</h2>
+            <p>Used to retrieve a list of published reports.</p>
+            <p><strong>Example Response</strong></p>
+<pre><code class="javascript">[
+    {
+        'id': 'RN0020314',
+        'report_about': 'This report provides an overview of sports engagement in England...',
+        'client': {
+            'id': 23,
+            'client_name': 'Sport England',
+            'client_website': 'http://www.sportengland.co.uk',
+            'contact_name': 'John Smith',
+            'contact_phone': '07777777777',
+            'contact_email': 'john@sportengland.co.uk'
+        }
+    },
+    ...
+]</code></pre>
+        </section>
+
+        <section class="method">
+            <h2 id="getReportId">GET /report/{id}</h2>
+            <p>Used to retrieve a specified report</p>
+            <p><strong>Example Response</strong></p>
+<pre><code class="javascript">{
+    'id': 'RN0020314',
+    'report_about': 'This report provides an overview of sports engagement in England...',
+    'client': {
+        'id': 23,
+        'client_name': 'Sport England',
+        'client_website': 'http://www.sportengland.co.uk',
+        'contact_name': 'John Smith',
+        'contact_phone': '07777777777',
+        'contact_email': 'john@sportengland.co.uk'
+    },
+    'report_data': [
+        ['year','local-authority','column_1', ...],
+        ['2009','00FE','45.4%', ...],
+        ['2010','00FE','47.2%', ...],
+        ...
+    ],
+    'report_order': [
+        'column_2': 'bar',
+        'column_1': 'pie',
+        ...
+    ]
+}</code></pre>
+        </section>
+
+        <section class="method">
+            <h2 id="getClient">GET /client/</h2>
+            <p><strong>Example Response</strong></p>
+<pre><code class="javascript">[
+    {
+        'id': 23,
+        'client_name': 'Sport England',
+        'client_website': 'http://www.sportengland.co.uk',
+        'contact_name': 'John Smith',
+        'contact_phone': '07777777777',
+        'contact_email': 'john@sportengland.co.uk'
+    },
+    ...
+}</code></pre>
+        </section>
+
+        <section class="method">
+            <h2 id="getClientId">GET /client/{id}</h2>
+            <p><strong>Example Response</strong></p>
+<pre><code class="javascript">{
+    'id': 23,
+    'client_name': 'Sport England',
+    'client_website': 'http://www.sportengland.co.uk',
+    'contact_name': 'John Smith',
+    'contact_phone': '07777777777',
+    'contact_email': 'john@sportengland.co.uk'
+}</code></pre>
+        </section>
+
+        <section class="method">
+            <h2 id="postToken">POST /auth/token/</h2>
+            <p> Used to retrieve and access token to be used for restricted API methods. <strong>Note:</strong> Users
+                will be provided credentials for use here by an application Administrator.</p>
+            <p> The Authorization header in this request must concatenate the users username and password with a colon ':'
+                and Base64 encode it. The body of the request <strong>must</strong> be 'grant_type=client_credentials'</p>
+            <p> <strong>Example:</strong><br>
+                Username: a.edwards. Password: secretPassword<br>
+                Concatenation: a.edwards:secretPassword<br>
+                Base64 Encoded: YS5lZHdhcmRzOnNlY3JldFBhc3N3b3Jk</p>
+            <p><strong>Example HTTP Request (URL Encoded)</strong></p>
+<pre><code class="http">POST /auth/token
+Host: api.hugowolferton.co.uk
+Authorization: Basic YS5lZHdhcmRzOnNlY3JldFBhc3N3b3Jk
+Content-Type: application/x-www-form-urlencoded;charset=UTF-8
+Content-Length: 29
+
+grant_type=client_credentials</code></pre>
+            <p><strong>Example HTTP Request (JSON Encoded)</strong></p>
+<pre><code>POST /auth/token
+Host: api.hugowolferton.co.uk
+Authorization: Basic YS5lZHdhcmRzOnNlY3JldFBhc3N3b3Jk
+Content-Type: application/json;charset=UTF-8
+
+{ 'grant_type': 'client_credentials' }</code></pre>
+            <p><strong>Example Response</strong></p>
+<pre><code class="javascript">HTTP/1.1 200 OK
+Status: 200 OK
+Content-Type: application/json;charset=utf-8
+Content-Encoding: gzip
+
+{
+    'token_type': '1',
+    'user_id': '1',
+    'token': '8106a2ae5c03ed123633586955ea6a508754a875e769892c',
+    'expires': '2013-11-13 17:43:32',
+    'scope': 'report:all client:all user:all'
+}</code></pre>
+        <table>
+            <tr>
+                <th>Field</th>
+                <th>Value type</th>
+                <th>Required</th>
+            </tr>
+            <tr>
+                <td>grant_type</td>
+                <td>client_credentials</td>
+                <td>✓</td>
+            </tr>
+        </table>
+        </section>
+
+        <section class="method">
+            <h2 id="deleteToken">DELETE /auth/token/</h2>
+            <p>Used to delete an OAuth token prior to the tokens expiry.</p>
+            <p><strong>Example Request</strong></p>
+<pre><code class="http">DELETE /auth/token/ HTTP/1.1
+Host: api.hugowolferton.co.uk
+Authorization: Bearer 8106a2ae5c03ed123633586955ea6a508754a875e769892c
+</code></pre>
+            <p><strong>Example Response</strong></p>
+<pre><code class="javascript">{
+    'success': 'Token 8106a2ae5c03ed123633586955ea6a508754a875e769892c deleted'
+}</code></pre>
+</section>
+
+        <section class="method">
+            <h2 id="postReport">POST /report/</h2>
+            <p>Used to upload a new report with a CSV file, client ID, report blurb.</p>
+            <p><strong>Example Request</strong></p>
+<pre><code class="http">POST /report/ HTTP/1.1
+Host: api.hugowolferton.co.uk
+Authorization: Bearer 8106a2ae5c03ed123633586955ea6a508754a875e769892c
+Content-Type: multipart/form-data; boundary=------------------------55cb75e582383efd
+</code></pre>
+            <p><strong>Example Response</strong></p>
+<pre><code class="javascript">{
+    'id': 'RN0020314',
+    'report_about': 'This report provides an overview of sports engagement in England...',
+    'client': {
+        'client-id': 23,
+        'client-name': 'Sport England',
+        'client-url': 'http://www.sportengland.co.uk',
+    },
+    'report-data': [
+        ['year','local-authority','column_1', ...],
+        ['2009','00FE','45.4%', ...],
+        ['2010','00FE','47.2%', ...],
+        ...
+    ]
+}</code></pre>
+            <table>
+                <tr>
+                    <th>Field</th>
+                    <th>Description</th>
+                    <th>Value type</th>
+                    <th>Required</th>
+                </tr>
+                <tr>
+                    <td>id</td>
+                    <td>Unique ID of the report</td>
+                    <td>String</td>
+                    <td>✓</td>
+                </tr>
+                <tr>
+                    <td>csv</td>
+                    <td>File containing the report data</td>
+                    <td>Comma Separated File</td>
+                    <td>✓</td>
+                </tr>
+                <tr>
+                    <td>client_id</td>
+                    <td>ID of the client</td>
+                    <td>Integer</td>
+                    <td>✓</td>
+                </tr>
+                <tr>
+                    <td>report_about</td>
+                    <td>Description of the report</td>
+                    <td>Text</td>
+                    <td>✓</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="method">
+            <h2 id="putReport">PUT /report/{id}</h2>
+            <p>Used to update details of a report.</p>
+            <p><strong>Example Request</strong></p>
+<pre><code class="http">PUT /report/RN0020314 HTTP/1.1
+Host: api.hugowolferton.co.uk
+Authorization: Bearer 8106a2ae5c03ed123633586955ea6a508754a875e769892c
+Content-Length: 594
+Content-Type: multipart/form-data; boundary=------------------------55cb75e582383efd
+</code></pre>
+            <p><strong>Example Response</strong></p>
+<pre><code class="javascript">{
+    'report_id': 'RN0020314',
+    'report_about': 'This report provides an overview of sports engagement in England...',
+    'client': {
+        'client-id': 23,
+        'client-name': 'Sport England',
+        'client-url': 'http://www.sportengland.co.uk',
+    },
+    'report_data': [
+        ['year','local-authority','column_1', ...],
+        ['2009','00FE','45.4%', ...],
+        ['2010','00FE','47.2%', ...],
+        ...
+    ],
+    'report_order': [
+        'column_2': 'pie',
+        'column_1': 'bar',
+        ...
+    ]
+}</code></pre>
+            <table>
+                <tr>
+                    <th>Field</th>
+                    <th>Description</th>
+                    <th>Value type</th>
+                    <th>Required</th>
+                </tr>
+                <tr>
+                    <td>id</td>
+                    <td>Unique ID of the report</td>
+                    <td>String</td>
+                    <td>✓</td>
+                </tr>
+                <tr>
+                    <td>csv</td>
+                    <td>File containing the report data</td>
+                    <td>Comma Separated File</td>
+                    <td>✗</td>
+                </tr>
+                <tr>
+                    <td>client_id</td>
+                    <td>ID of the client</td>
+                    <td>Integer</td>
+                    <td>✗</td>
+                </tr>
+                <tr>
+                    <td>report_about</td>
+                    <td>Description of the report</td>
+                    <td>Text</td>
+                    <td>✗</td>
+                </tr>
+                <tr>
+                    <td>report_order</td>
+                    <td>JSON encoded order of the report and describe how each column is displayed<br>
+                        <strong>NB:</strong> this should include all columns of the report, excluding year and local authority)</td>
+                    <td>Text</td>
+                    <td>✓*</td>
+                </tr>
+            </table>
+            <p><strong>NB:</strong> report_order is only required with the first PUT request.</p>
+        </section>
+
+        <section class="method">
+            <h2 id="deleteReport">DELETE /report/{id}</h2>
+            <p><strong>Example Request</strong></p>
+<pre><code class="http">DELETE /report/RN0020314 HTTP/1.1
+Host: api.hugowolferton.co.uk
+Authorization: Bearer 8106a2ae5c03ed123633586955ea6a508754a875e769892c
+</code></pre>
+            <p><strong>Example Response</strong></p>
+<pre><code class="javascript">{
+    'success': 'Report RN0020314 deleted'
+}</code></pre>
+            <table>
+                <tr>
+                    <th>Field</th>
+                    <th>Description</th>
+                    <th>Value type</th>
+                    <th>Required</th>
+                </tr>
+                <tr>
+                    <td>id</td>
+                    <td>Unique ID of the report to be deleted</td>
+                    <td>String</td>
+                    <td>✓</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="method">
+            <h2 id="postClient">POST /client/</h2>
+            <p><strong>Example Request</strong></p>
+<pre><code class="http">POST /client/ HTTP/1.1
+Host: api.hugowolferton.co.uk
+Authorization: Bearer 8106a2ae5c03ed123633586955ea6a508754a875e769892c
+Content-Type: application/x-www-form-urlencoded;charset=UTF-8
+
+client_name=Sport+England&client_website=http%3A%2F%2Fwww.sportengland.co.uk&contact_name=John+Smith&contact_phone=07777777777&contact_email=john%40sportengland.co.uk
+</code></pre>
+            <p><strong>Example Response</strong></p>
+<pre><code class="javascript">{
+    'id': 24,
+    'client_name': 'Sport England',
+    'client_website': 'http://www.sportengland.co.uk',
+    'contact_name': 'John Smith',
+    'contact_phone': '07777777777',
+    'contact_email': 'john@sportengland.co.uk'
+}</code></pre>
+            <table>
+                <tr>
+                    <th>Field</th>
+                    <th>Description</th>
+                    <th>Value type</th>
+                    <th>Required</th>
+                </tr>
+                <tr>
+                    <td>client_name</td>
+                    <td>Name of the client organisation</td>
+                    <td>String</td>
+                    <td>✓</td>
+                </tr>
+                <tr>
+                    <td>client_website</td>
+                    <td>URL of the clients website</td>
+                    <td>String</td>
+                    <td>✓</td>
+                </tr>
+                <tr>
+                    <td>contact_name</td>
+                    <td>Name of the primary contact in the client organisation</td>
+                    <td>String</td>
+                    <td>✓</td>
+                </tr>
+                <tr>
+                    <td>contact_phone</td>
+                    <td>Phone number of the primary contact</td>
+                    <td>String</td>
+                    <td>✓</td>
+                </tr>
+                <tr>
+                    <td>contact_email</td>
+                    <td>Email address of the primary contact</td>
+                    <td>String</td>
+                    <td>✓</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="method">
+            <h2 id="putClient">PUT /client/{id}</h2>
+            <p><strong>Example Request</strong></p>
+<pre><code class="http">PUT /client/24 HTTP/1.1
+Host: api.hugowolferton.co.uk
+Authorization: Bearer 8106a2ae5c03ed123633586955ea6a508754a875e769892c
+Content-Type: application/x-www-form-urlencoded;charset=UTF-8
+
+contact_name=James+Brown&contact_phone=07734777789&contact_email=james%40sportengland.co.uk
+</code></pre>
+            <p><strong>Example Response</strong></p>
+<pre><code class="javascript">{
+    'id': 24,
+    'client_name': 'Sport England',
+    'client_website': 'http://www.sportengland.co.uk',
+    'contact_name': 'James Brown',
+    'contact_phone': '07734777789',
+    'contact_email': 'james@sportengland.co.uk'
+}</code></pre>
+            <table>
+                <tr>
+                    <th>Field</th>
+                    <th>Description</th>
+                    <th>Value type</th>
+                    <th>Required</th>
+                </tr>
+                <tr>
+                    <td>client_name</td>
+                    <td>Name of the client organisation</td>
+                    <td>String</td>
+                    <td>✗</td>
+                </tr>
+                <tr>
+                    <td>client_website</td>
+                    <td>URL of the clients website</td>
+                    <td>String</td>
+                    <td>✗</td>
+                </tr>
+                <tr>
+                    <td>contact_name</td>
+                    <td>Name of the primary contact in the client organisation</td>
+                    <td>String</td>
+                    <td>✗</td>
+                </tr>
+                <tr>
+                    <td>contact_phone</td>
+                    <td>Phone number of the primary contact</td>
+                    <td>String</td>
+                    <td>✗</td>
+                </tr>
+                <tr>
+                    <td>contact_email</td>
+                    <td>Email address of the primary contact</td>
+                    <td>String</td>
+                    <td>✗</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="method">
+            <h2 id="deleteClient">DELETE /client/{id}</h2>
+            <p><strong>Example Request</strong></p>
+<pre><code class="http">DELETE /client/24 HTTP/1.1
+Host: api.hugowolferton.co.uk
+Authorization: Bearer 8106a2ae5c03ed123633586955ea6a508754a875e769892c
+</code></pre>
+            <p><strong>Example Response</strong></p>
+<pre><code class="javascript">{
+    'success': 'Client 24 deleted'
+}</code></pre>
+            <table>
+                <tr>
+                    <th>Field</th>
+                    <th>Description</th>
+                    <th>Value type</th>
+                    <th>Required</th>
+                </tr>
+                <tr>
+                    <td>id</td>
+                    <td>Unique ID of the client to be deleted</td>
+                    <td>String</td>
+                    <td>✓</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="method">
+            <h2 id="postUser">POST /auth/user/</h2>
+            <p><strong>Example Request</strong></p>
+<pre><code class="http">POST /auth/user/ HTTP/1.1
+Host: api.hugowolferton.co.uk
+Authorization: Bearer 8106a2ae5c03ed123633586955ea6a508754a875e769892c
+
+user_name=John+Scott&user_logon=j.scott&user_secret=securePassword&user_role=2
+</code></pre>
+            <p><strong>Example Response</strong></p>
+<pre><code class="javascript">{
+    'id': '2',
+    'user_name': 'John Scott',
+    'user_logon': 'j.scott',
+    'user_role': '2'
+    'active': true
+}</code></pre>
+            <table>
+                <tr>
+                    <th>Field</th>
+                    <th>Description</th>
+                    <th>Value type</th>
+                    <th>Required</th>
+                </tr>
+                <tr>
+                    <td>user_name</td>
+                    <td>Real name of the user</td>
+                    <td>String</td>
+                    <td>✓</td>
+                </tr>
+                <tr>
+                    <td>user_logon</td>
+                    <td>Username to authenticate the user</td>
+                    <td>String</td>
+                    <td>✓</td>
+                </tr>
+                <tr>
+                    <td>user_role</td>
+                    <td>Integer denoting the user role - see table below</td>
+                    <td>Integer</td>
+                    <td>✓</td>
+                </tr>
+                <tr>
+                    <td>active</td>
+                    <td>Whether the user can use the API</td>
+                    <td>Boolean (true/false)</td>
+                    <td>✓</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="method">
+            <h2 id="putUser">PUT /auth/user/{id}</h2>
+            <p><strong>Example Request</strong></p>
+<pre><code class="http">PUT /auth/user/2 HTTP/1.1
+Host: api.hugowolferton.co.uk
+Authorization: Bearer 8106a2ae5c03ed123633586955ea6a508754a875e769892c
+
+active=false
+</code></pre>
+            <p><strong>Example Response</strong></p>
+<pre><code class="javascript">{
+    'id': '2',
+    'user_name': 'John Scott',
+    'user_logon': 'j.scott',
+    'user_role': '2'
+    'active': false
+}</code></pre>
+            <table>
+                <tr>
+                    <th>Field</th>
+                    <th>Description</th>
+                    <th>Value type</th>
+                    <th>Required</th>
+                </tr>
+                <tr>
+                    <td>id</td>
+                    <td>Unique ID of the client to be deleted</td>
+                    <td>String</td>
+                    <td>✓</td>
+                </tr>
+                <tr>
+                    <td>user_name</td>
+                    <td>Real name of the user</td>
+                    <td>String</td>
+                    <td>✗</td>
+                </tr>
+                <tr>
+                    <td>user_logon</td>
+                    <td>Username to authenticate the user</td>
+                    <td>String</td>
+                    <td>✗</td>
+                </tr>
+                <tr>
+                    <td>user_role</td>
+                    <td>Integer denoting the user role - see table below</td>
+                    <td>Integer</td>
+                    <td>✗</td>
+                </tr>
+                <tr>
+                    <td>active</td>
+                    <td>Whether the user can use the API</td>
+                    <td>Boolean (true/false)</td>
+                    <td>✗</td>
+                </tr>
+            </table>
+            <p><strong>User Roles</strong></p>
+            <table>
+                <tr>
+                    <th>User Role</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>Editor</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Administrator</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="method">
+            <h2 id="deleteUser">DELETE /auth/user/{id}</h2>
+            <p><strong>Example Request</strong></p>
+<pre><code class="http">DELETE /auth/user/2 HTTP/1.1
+Host: api.hugowolferton.co.uk
+Authorization: Bearer 8106a2ae5c03ed123633586955ea6a508754a875e769892c
+</code></pre>
+            <p><strong>Example Response</strong></p>
+<pre><code class="javascript">{
+    'success': 'User j.scott deleted'
+}</code></pre>
+            <table>
+                <tr>
+                    <th>Field</th>
+                    <th>Description</th>
+                    <th>Value type</th>
+                    <th>Required</th>
+                </tr>
+                <tr>
+                    <td>id</td>
+                    <td>Unique ID of the user to be deleted</td>
+                    <td>String</td>
+                    <td>✓</td>
+                </tr>
+            </table>
+        </section>
+    </div>
+
+    <script src="js/vendor/jquery-2.0.3.min.js"></script>
+    <script src="js/vendor/highlight.pack.js"></script>
+    <script src="js/hugo.js"></script>
+</body>
+</html>
