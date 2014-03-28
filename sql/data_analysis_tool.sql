@@ -104,12 +104,12 @@ CREATE  TABLE IF NOT EXISTS `hugo_reports`.`clients` (
 DROP TABLE IF EXISTS `hugo_reports`.`report_metadata`;
 
 CREATE  TABLE IF NOT EXISTS `hugo_reports`.`report_metadata` (
-  `report_id` INT NOT NULL ,
+  `id` VARCHAR(45) NOT NULL ,
   `client_id` INT NOT NULL ,
   `report_order` TEXT NOT NULL ,
   `report_about` TEXT NOT NULL ,
   `published` TINYINT(1) NOT NULL DEFAULT 0 ,
-  PRIMARY KEY (`report_id`) ,
+  PRIMARY KEY (`id`) ,
   INDEX `report_client_idx` (`client_id` ASC) ,
   CONSTRAINT `report_client`
   FOREIGN KEY (`client_id`)
