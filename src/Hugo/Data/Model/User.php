@@ -41,6 +41,27 @@ class User implements ModelInterface {
     }
 
     /**
+     * @param DataSource $store
+     * @return array
+     */
+    static public function listArray(DataSource $store)
+    {
+        $users = $store->read('users', ['id', 'user_name', 'user_logon', 'user_role', 'active']);
+
+        if(!(bool)$users) {
+            return ['error' => 'No users to list'];
+        }
+
+        foreach($users as &$user) {
+            $user_role = $store->read('user_roles', ['id', 'user_role'], ['id' => $user['user_role']])[0];
+            $user['user_role'] = $user_role['user_role'];
+            $user['active'] = (bool)$user['active'];
+        }
+
+        return $users;
+    }
+
+    /**
      * Sets user details from a base64 encoded username/password
      *
      * @param $encodedUser

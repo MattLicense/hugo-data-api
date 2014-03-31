@@ -148,7 +148,7 @@ class MySQL implements DBInterface
         $statement = $this->pdo->prepare($query);
         $statement->execute($params);
 
-        return $statement->fetch(\PDO::FETCH_ASSOC);
+        return $statement->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     /**

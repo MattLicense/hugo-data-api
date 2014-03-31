@@ -76,6 +76,21 @@ class AuthController extends AbstractController {
                             ['Content-Type' => Constants::CONTENT_TYPE]);
     }
 
+    public function getUser($id = null)
+    {
+        $store = new MySQL(['db' => 'hugo_oauth', 'table' => 'users']);
+        if(null === $id) {
+            $response = User::listArray($store);
+        } else {
+            $user = new User($store, $id);
+            $response = $user->toArray();
+        }
+
+        return new Response(json_encode($response, JSON_PRETTY_PRINT),
+                            Constants::HTTP_OK,
+                            ['Content-Type' => Constants::CONTENT_TYPE]);
+    }
+
     /**
      * POST /auth/user/
      *
