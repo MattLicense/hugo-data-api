@@ -8,8 +8,9 @@
 
 namespace Hugo\Data\Controller;
 
-use Hugo\Data\Application\Logger;
-use Symfony\Component\HttpFoundation\Request,
+use Hugo\Data\Application\Logger,
+    Symfony\Component\HttpFoundation\Request,
+    Symfony\Component\HttpFoundation\Response,
     Hugo\Data\Exception\BadMethodCallException;
 
 /**
@@ -42,8 +43,16 @@ abstract class AbstractController implements ControllerInterface {
             $method = 'index';
         }
 
+        // check the HTTP request method
+        $httpMethod = strtolower($this->request->getMethod());
+
+        // ensure OPTIONS requests are okay
+        if($httpMethod == 'options') {
+            return new Response('', Constants::HTTP_NO_CONTENT, ['Content-Type' => Constants::CONTENT_TYPE]);
+        }
+
         // add the HTTP request method to make the function call, e.g., postAuth
-        $method = strtolower($this->request->getMethod()).ucfirst($method);
+        $method = $httpMethod.ucfirst($method);
 
         // make sure that the method exists
         if(!is_callable([$this,$method])) {
