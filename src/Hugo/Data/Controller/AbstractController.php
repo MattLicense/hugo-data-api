@@ -37,14 +37,14 @@ abstract class AbstractController implements ControllerInterface {
     final public function handle()
     {
         $pathArray = explode('/', trim($this->request->getPathInfo(), '/'));
+        $httpMethod = strtolower($this->request->getMethod());
         $controller = array_shift($pathArray);  // first part of URI should be the controller
         $method = array_shift($pathArray);      // next part should be the method
-        if(null === $method) {
+        $concatenatedMethod = $httpMethod . ucfirst($method);
+        if(null === $method || !is_callable([$this,$concatenatedMethod])) {
+            array_push($pathArray, $method);    // if the method doesn't exist, we'll treat it as a variable for Index functions
             $method = 'index';
         }
-
-        // check the HTTP request method
-        $httpMethod = strtolower($this->request->getMethod());
 
         // ensure OPTIONS requests are okay
         if($httpMethod == 'options') {
@@ -56,6 +56,7 @@ abstract class AbstractController implements ControllerInterface {
 
         // make sure that the method exists
         if(!is_callable([$this,$method])) {
+            $this->log->debug('Controller action {class}@{method}', ['class' => get_class($this), 'method' => $method]);
             $this->log->error(sprintf("Route %s %s not defined", $this->request->getMethod(), $this->request->getRequestUri()));
             throw new BadMethodCallException(
                 sprintf("Route %s %s not defined", $this->request->getMethod(), $this->request->getRequestUri()),

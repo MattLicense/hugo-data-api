@@ -36,7 +36,7 @@ class User implements ModelInterface {
     {
         $this->store = $store;
         if(null !== $id) {
-            $this->_data = $this->store->read('users', [], ['id' => $id]);
+            $this->_data = $this->store->read('users', [], ['id' => $id])[0];
         }
     }
 
@@ -49,7 +49,7 @@ class User implements ModelInterface {
         $users = $store->read('users', ['id', 'user_name', 'user_logon', 'user_role', 'active']);
 
         if(!(bool)$users) {
-            return ['error' => 'No users to list'];
+            return [];
         }
 
         foreach($users as &$user) {
@@ -83,7 +83,7 @@ class User implements ModelInterface {
     public function login($user, $pass)
     {
         // search for the username/password combination
-        $match = $this->store->read('users', [], ['user_logon' => $user, 'active' => true]);
+        $match = $this->store->read('users', [], ['user_logon' => $user, 'active' => true])[0];
 
         if((bool)$match) {
             // if a match is found, then assign the user details

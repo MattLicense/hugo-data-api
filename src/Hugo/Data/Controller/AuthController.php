@@ -76,6 +76,12 @@ class AuthController extends AbstractController {
                             ['Content-Type' => Constants::CONTENT_TYPE]);
     }
 
+    /**
+     * GET /auth/user/{id}
+     *
+     * @param null $id
+     * @return Response
+     */
     public function getUser($id = null)
     {
         $store = new MySQL(['db' => 'hugo_oauth', 'table' => 'users']);
@@ -83,7 +89,15 @@ class AuthController extends AbstractController {
             $response = User::listArray($store);
         } else {
             $user = new User($store, $id);
-            $response = $user->toArray();
+            $userArray = $user->toArray();
+
+            $userRole = $store->read('user_roles', ['id', 'user_role'], ['id' => $userArray['user_role']])[0];
+
+            unset($userArray['user_secret']);   // don't display password hash
+            $userArray['active'] = (bool)$userArray['active'];  // return a true boolean (instead of 0, 1)
+            $userArray['user_role'] = $userRole['user_role'];   // return a user-friendly role
+
+            $response = $userArray;
         }
 
         return new Response(json_encode($response, JSON_PRETTY_PRINT),

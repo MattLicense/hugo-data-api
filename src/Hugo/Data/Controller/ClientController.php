@@ -8,11 +8,11 @@
 
 namespace Hugo\Data\Controller;
 
-use Hugo\Data\Model\Client;
-use Hugo\Data\OAuth\AuthServer,
+use Hugo\Data\Model\Client,
+    Hugo\Data\Storage\DB\MySQL,
+    Hugo\Data\OAuth\AuthServer,
+    Symfony\Component\HttpFoundation\Response,
     Hugo\Data\Exception\InvalidRequestException;
-use Hugo\Data\Storage\DB\MySQL;
-use Symfony\Component\HttpFoundation\Response;
 
 class ClientController extends AbstractController {
 

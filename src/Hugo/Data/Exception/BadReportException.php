@@ -1,6 +1,6 @@
 <?php
 /**
- * Report.php
+ * BadReportException.php
  * data-api
  * @author: Matt License, B023339
  * @date:   2014/02

@@ -8,13 +8,14 @@
 
 namespace Hugo\Data\Storage\DB;
 
-use Hugo\Data\Application\Logger;
-use Hugo\Data\Exception\InvalidQueryException;
-use Hugo\Data\Storage\FileSystem;
+use Hugo\Data\Storage\FileSystem,
+    Hugo\Data\Application\Logger,
+    Hugo\Data\Exception\InvalidQueryException;
 
 /**
  * Class Query
  * @package Hugo\Data\Storage
+ * @todo Add JOIN functionality
  */
 class Query {
 

@@ -1,11 +1,10 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: Matt
- * Date: 15/11/13
- * Time: 23:44
+ * DuplicateRouteException.php
+ * data-api
+ * @author: Matt
+ * @date:   2013/12
  */
-
 namespace Hugo\Data\Exception;
 
 class DuplicateRouteException extends \Exception { }

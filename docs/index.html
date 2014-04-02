@@ -18,6 +18,8 @@
                 <li><a href="#getReportId">GET /report/{id}</a></li>
                 <li><a href="#getClient">GET /client/</a></li>
                 <li><a href="#getClientId">GET /client/{id}</a></li>
+                <li><a href="#getUser">GET /auth/user/</a></li>
+                <li><a href="#getUserId">GET /auth/user/{id}</a></li>
                 <li><a href="#postToken">POST /auth/token/</a></li>
                 <li><a href="#deleteToken">DELETE /auth/token/</a></li>
                 <li><a href="#postReport">POST /report/</a></li>
@@ -109,6 +111,33 @@
     'contact_name': 'John Smith',
     'contact_phone': '07777777777',
     'contact_email': 'john@sportengland.co.uk'
+}</code></pre>
+        </section>
+
+        <section class="method">
+            <h2 id="getUser">GET /auth/user/</h2>
+            <p><strong>Example Response</strong></p>
+<pre><code class="javascript">[
+    {
+        'id': 1,
+        'user_name': 'Anna Edwards',
+        'user_logon': 'a.edwards',
+        'user_role': 'administrator',
+        'active': true
+    },
+    ...
+}</code></pre>
+        </section>
+
+        <section class="method">
+            <h2 id="getUserId">GET /auth/user/{id}</h2>
+            <p><strong>Example Response</strong></p>
+<pre><code class="javascript">{
+    'id': 1,
+    'user_name': 'Anna Edwards',
+    'user_logon': 'a.edwards',
+    'user_role': 'administrator',
+    'active': true
 }</code></pre>
         </section>
 

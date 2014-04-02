@@ -10,10 +10,16 @@ namespace Hugo\Data\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Class ControllerFactory
+ * @package Hugo\Data\Controller
+ */
 class ControllerFactory {
 
-    protected $request;
-
+    /**
+     * @param Request $request
+     * @return ControllerInterface
+     */
     public function create(Request $request)
     {
         $type = explode('/', trim($request->getPathInfo(), '/'))[0];

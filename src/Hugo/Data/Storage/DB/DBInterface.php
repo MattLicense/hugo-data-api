@@ -2,7 +2,7 @@
 /**
  * DBInterface.php
  * data-api
- * @author: Matt
+ * @author: Matthew License, B023339
  * @date:   2014/03
  */
 
@@ -10,6 +10,10 @@ namespace Hugo\Data\Storage\DB;
 
 use Hugo\Data\Storage\DataSource;
 
+/**
+ * Interface DBInterface
+ * @package Hugo\Data\Storage\DB
+ */
 interface DBInterface extends DataSource {
 
     /**

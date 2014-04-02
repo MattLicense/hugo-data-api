@@ -18,6 +18,7 @@ use Hugo\Data\Storage\FileSystem,
  * Class MySQL
  * @package Hugo\Data\Storage\DB
  * @todo Integrate Query object into ModelInterface-based functions
+ * @todo Add JOIN functionality
  */
 class MySQL implements DBInterface
 {

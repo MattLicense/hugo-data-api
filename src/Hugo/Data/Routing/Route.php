@@ -1,13 +1,15 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: Matt
- * Date: 13/11/13
- * Time: 23:18
+ * Route.php
+ * data-api
+ * @author: Matthew License, B023339
+ * @date:   2013/11
  */
 
 namespace Hugo\Data\Routing;
-use Symfony\Component\HttpFoundation\Request;
+
+use Symfony\Component\HttpFoundation\Request,
+    Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class Route

@@ -81,7 +81,7 @@ class Bearer implements TokenTypeInterface {
         $this->_data['scope'] = $this->user->user_role;
 
         // check if the user already has a token assigned
-        if($token = $this->store->read('token', ['id', 'user_id'], ['user_id' => $this->_data['user_id']])) {
+        if($token = $this->store->read('token', ['id', 'user_id'], ['user_id' => $this->_data['user_id']])[0]) {
             $this->_data['id'] = $token['id'];
             return $this->store->update($this);
         }
@@ -96,7 +96,7 @@ class Bearer implements TokenTypeInterface {
      */
     public function verifyToken($token, $controller)
     {
-        $tokenFromStore = $this->store->read('token', [], ['token' => $token]);
+        $tokenFromStore = $this->store->read('token', [], ['token' => $token])[0];
         if(!(bool)$tokenFromStore) {
             return false;
         }
@@ -175,7 +175,7 @@ class Bearer implements TokenTypeInterface {
             return false;
         }
 
-        $token = $this->store->read('users', [], ['token' => $this->_data['token']]);
+        $token = $this->store->read('users', [], ['token' => $this->_data['token']])[0];
 
         return $token == $this->_data;
     }

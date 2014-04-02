@@ -9,12 +9,15 @@
 namespace Hugo\Data;
 
 use Psr\Log\LoggerInterface,
-    Hugo\Data\Storage\DB\MySQL,
     Hugo\Data\Routing\RouterInterface,
     Hugo\Data\Application\AppInterface,
     Symfony\Component\HttpFoundation\Request,
     Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Class API
+ * @package Hugo\Data
+ */
 class API implements AppInterface, RouterInterface
 {
     /**

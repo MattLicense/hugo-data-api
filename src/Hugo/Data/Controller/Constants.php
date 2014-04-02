@@ -1,9 +1,17 @@
 <?php
-
+/**
+ * Constants.php
+ * data-api
+ * @author: Matt
+ * @date:   2013/12
+ */
 
 namespace Hugo\Data\Controller;
 
-
+/**
+ * Class Constants
+ * @package Hugo\Data\Controller
+ */
 class Constants {
 
     const CONTROLLER_NS = '\\Hugo\\Data\\Controller';

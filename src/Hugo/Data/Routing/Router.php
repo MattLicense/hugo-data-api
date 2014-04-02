@@ -1,18 +1,18 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: Matt
- * Date: 13/11/13
- * Time: 23:18
+ * Router.php
+ * data-api
+ * @author: Matthew License, B023339
+ * @date:   2013/11
  */
 
 namespace Hugo\Data\Routing;
 
-use Hugo\Data\Controller\ControllerFactory,
-    Psr\Log\LoggerInterface,
-    Hugo\Data\Exception\DuplicateRouteException,
+use Psr\Log\LoggerInterface,
+    Hugo\Data\Controller\ControllerFactory,
     Symfony\Component\HttpFoundation\Request,
-    Symfony\Component\HttpFoundation\Response;
+    Symfony\Component\HttpFoundation\Response,
+    Hugo\Data\Exception\DuplicateRouteException;
 
 /**
  * Class Router
@@ -71,6 +71,7 @@ class Router implements RouterInterface {
      *
      * @param $route
      * @param callable $callback
+     * @return void
      * @throws \Hugo\Data\Exception\DuplicateRouteException
      */
     public function register($route, callable $callback)

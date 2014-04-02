@@ -38,7 +38,7 @@ class Client implements ModelInterface {
     {
         $this->store = $store;
         if(null !== $id) {
-            $client = $this->store->read('clients', [], ['id' => $id]);
+            $client = $this->store->read('clients', [], ['id' => $id])[0];
             if(!$client) {
                 throw new InvalidRequestException("Client id {$id} not found.", 404);
             }
@@ -54,7 +54,7 @@ class Client implements ModelInterface {
     static public function listArray(DataSource $store)
     {
         $clients = $store->read('clients', [], []);
-        return !(bool)$clients ? ['error' => 'No clients'] : $clients;
+        return !(bool)$clients ? [] : $clients;
     }
 
     /**
@@ -94,7 +94,7 @@ class Client implements ModelInterface {
             return false;
         }
 
-        $client = $this->store->read('clients', [], ['id' => $this->_data['id']]);
+        $client = $this->store->read('clients', [], ['id' => $this->_data['id']])[0];
 
         return $client == $this->_data;
     }

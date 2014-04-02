@@ -53,7 +53,7 @@ class Report implements ModelInterface {
             ['id', 'client_id', 'report_about'],
             ['published' => true]
         );
-        return !(bool)$reports ? ['error' => 'No reports found'] : $reports;
+        return !(bool)$reports ? [] : $reports;
     }
 
     /**
