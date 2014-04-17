@@ -165,7 +165,6 @@ pip-log.txt
 composer.lock
 composer.phar
 *.log
-*.json
 /logs
 /.idea
 /uploads
