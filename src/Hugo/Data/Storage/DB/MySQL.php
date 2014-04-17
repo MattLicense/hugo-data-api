@@ -33,7 +33,15 @@ class MySQL implements DBInterface
      */
     private $pdo;
 
+    /**
+     * @var \Hugo\Data\Application\Logger
+     */
     private $log;
+
+    /**
+     * @var string
+     */
+    private $dsn;
 
     const MYSQL_AND = 0;
     const MYSQL_OR  = 1;
@@ -69,8 +77,8 @@ class MySQL implements DBInterface
             'pass'  => 'D0ubl3th1nk!'
         ] + $config;
 
-        $dsn = "mysql:host={$this->config['host']};dbname={$this->config['db']}";
-        $this->connect($dsn);
+        $this->dsn = "mysql:host={$this->config['host']};dbname={$this->config['db']}";
+        $this->connect($this->dsn);
     }
 
     /**
@@ -113,18 +121,23 @@ class MySQL implements DBInterface
      * @param ModelInterface $model
      * @return bool
      */
-    public function create(ModelInterface $model)
+    public function create(ModelInterface &$model)
     {
         $query = $this->generateInsertQuery($this->config['table'], $model->toArray());
 
+        if(is_null($this->pdo)) {
+            $this->connect($this->dsn);
+        }
+
         $statement = $this->pdo->prepare($query);
+        $this->log->debug($statement->queryString);
         $exec = $statement->execute($model->toArray());
 
         if(!$exec) {
             $this->log->error("INSERT query failed: {error}", ['error' => json_encode($statement->errorInfo())]);
         }
 
-        $model->set(['id' => $this->pdo->lastInsertId()]);
+        $model->set(['id' => $this->getLatestId()]);
 
         return $exec;
     }
@@ -144,9 +157,14 @@ class MySQL implements DBInterface
                                 ['table' => $this->config['table']]);
         }
 
+        if(is_null($this->pdo)) {
+            $this->connect($this->dsn);
+        }
+
         $query = $this->generateSelectQuery($table, $cols, $params, $join);
 
         $statement = $this->pdo->prepare($query);
+        $this->log->debug($statement->queryString);
         $statement->execute($params);
 
         return $statement->fetchAll(\PDO::FETCH_ASSOC);
@@ -171,6 +189,7 @@ class MySQL implements DBInterface
         $query = $this->generateUpdateQuery($this->config['table'], $modelArray, ['id' => $model->id]);
 
         $statement = $this->pdo->prepare($query);
+        $this->log->debug($statement->queryString);
         $exec = $statement->execute($modelArray + ['id' => $model->id]);
 
         if(!$exec) {
@@ -195,6 +214,7 @@ class MySQL implements DBInterface
         $query = $this->generateDeleteQuery($this->config['table'], ['id' => $model->id]);
 
         $statement = $this->pdo->prepare($query);
+        $this->log->debug($statement->queryString);
         $exec = $statement->execute(['id' => (int)$model->id]);
 
         if(!$exec) {
@@ -246,7 +266,7 @@ class MySQL implements DBInterface
     public function generateSelectQuery($table, $cols = [], $params = [], $and = self::MYSQL_AND)
     {
         $columns = (count($cols) > 0) ? implode(", ", $cols) : '*';
-        $query = 'SELECT '. $columns .' FROM ' . $table;
+        $query = 'SELECT '. $columns .' FROM `' . $table . '`';
 
         if(count($params) > 0) {
             $query .= ' WHERE ' . $this->prepareConditions($params, $and);
@@ -263,7 +283,7 @@ class MySQL implements DBInterface
      */
     public function generateInsertQuery($table, array $values = [])
     {
-        $query  = "INSERT INTO " . $table . "(`" . implode('`,`',array_keys($values)) . "`) ";
+        $query  = "INSERT INTO `" . $table . "` (`" . implode('`,`',array_keys($values)) . "`) ";
         $query .= "VALUES (:" . implode(",:", array_keys($values)) . ")";
         $this->log->debug('INSERT query generated: {query}', ['query' => $query]);
         return $query;
@@ -298,7 +318,7 @@ class MySQL implements DBInterface
             throw new InvalidQueryException("Deleting all entries from {$table} not permitted", 500);
         }
 
-        $query = 'DELETE FROM ' . $table . ' WHERE ' . $this->prepareConditions($conditions, $join);
+        $query = 'DELETE FROM `' . $table . '` WHERE ' . $this->prepareConditions($conditions, $join);
         $this->log->debug('DELETE query generated: {query}', ['query' => $query]);
         return $query;
     }

@@ -19,7 +19,7 @@ interface DataSource
      * @param ModelInterface $model
      * @return bool
      */
-    public function create(ModelInterface $model);
+    public function create(ModelInterface &$model);
 
     /**
      * Gets a model

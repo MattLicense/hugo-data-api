@@ -14,6 +14,7 @@
             <h1>Hugo<span>Wolferton</span></h1>
             <h2>Data Analysis Tool API</h2>
             <ul>
+                <li><a href="#geography">Geography</a></li>
                 <li><a href="#getReports">GET /report/</a></li>
                 <li><a href="#getReportId">GET /report/{id}</a></li>
                 <li><a href="#getClient">GET /client/</a></li>
@@ -35,6 +36,17 @@
         </div>
     </div>
     <div class="content">
+        <section class="method">
+            <h2 id="geography">Geography Endpoints</h2>
+            <p>There are three separate endpoints in the API which return geographical information</p>
+            <h3>GET /geo/locals</h3>
+            <p>Returns a list of Local Authorities with LEP and Region links</p>
+            <h3>GET /geo/leps</h3>
+            <p>Returns a list of Local Enterprise Partnerships</p>
+            <h3>GET /geo/regions</h3>
+            <p>Returns a list of regions in England</p>
+        </section>
+
         <section class="method">
             <h2 id="getReports">GET /report/</h2>
             <p>Used to retrieve a list of published reports.</p>
@@ -225,7 +237,7 @@ Content-Type: multipart/form-data; boundary=------------------------55cb75e58238
         'client-name': 'Sport England',
         'client-url': 'http://www.sportengland.co.uk',
     },
-    'report-data': [
+    'report_data': [
         ['year','local-authority','column_1', ...],
         ['2009','00FE','45.4%', ...],
         ['2010','00FE','47.2%', ...],
@@ -662,7 +674,7 @@ Authorization: Bearer 8106a2ae5c03ed123633586955ea6a508754a875e769892c
         </section>
     </div>
 
-    <script src="js/vendor/jquery-2.0.3.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
     <script src="js/vendor/highlight.pack.js"></script>
     <script src="js/hugo.js"></script>
 </body>

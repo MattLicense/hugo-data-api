@@ -8,12 +8,12 @@
 
 namespace Hugo\Data\Controller;
 
-use Hugo\Data\Exception\InvalidTokenException;
-use Hugo\Data\Model\User;
-use Hugo\Data\OAuth\AuthServer;
-use Hugo\Data\Storage\DB\MySQL;
-use Symfony\Component\HttpFoundation\Response;
-use Hugo\Data\Exception\InvalidRequestException;
+use Hugo\Data\Model\User,
+    Hugo\Data\Storage\DB\MySQL,
+    Hugo\Data\OAuth\AuthServer,
+    Symfony\Component\HttpFoundation\Response,
+    Hugo\Data\Exception\InvalidTokenException,
+    Hugo\Data\Exception\InvalidRequestException;
 
 /**
  * Class AuthController
@@ -32,12 +32,14 @@ class AuthController extends AbstractController {
         $authServer = new AuthServer();
         if(!$authServer->verifyAccessRequest($this->request)) {
             $this->log->error("Unauthorised access request from {ip}", ['ip' => $this->request->getClientIp()]);
-            throw new InvalidRequestException("Unauthorised access request, check Authorization header", Constants::HTTP_FORBIDDEN);
+            throw new InvalidRequestException("Unauthorised access request, check Authorization header", Constants::HTTP_UNAUTHORISED);
         }
 
         $token = $authServer->generateToken('bearer');
+        $tokenArray = $token->toArray();
+        $tokenArray['scope'] = $token->scope[$tokenArray['scope']];
 
-        return new Response(json_encode($token->toArray(), JSON_PRETTY_PRINT),
+        return new Response(json_encode($tokenArray, JSON_PRETTY_PRINT),
                             Constants::HTTP_OK,
                             ['Content-Type' => Constants::CONTENT_TYPE]);
     }
@@ -85,9 +87,11 @@ class AuthController extends AbstractController {
     public function getUser($id = null)
     {
         $store = new MySQL(['db' => 'hugo_oauth', 'table' => 'users']);
-        if(null === $id) {
+        if(null === $id) {  // GET /auth/user/
             $response = User::listArray($store);
-        } else {
+        } else if(strtolower($id) == 'roles') { // GET /auth/user/roles/
+            $response = $store->read('user_roles');
+        } else { // GET /auth/user/{id}
             $user = new User($store, $id);
             $userArray = $user->toArray();
 

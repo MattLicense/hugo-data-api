@@ -31,12 +31,19 @@ class User implements ModelInterface {
     /**
      * @param DataSource $store
      * @param null $id
+     * @throws InvalidRequestException
      */
     public function __construct(DataSource $store, $id = null)
     {
         $this->store = $store;
         if(null !== $id) {
-            $this->_data = $this->store->read('users', [], ['id' => $id])[0];
+            $user = $this->store->read('users', [], ['id' => $id]);
+
+            if(!(bool)$user) {
+                throw new InvalidRequestException("No user {$id} found.", 404);
+            }
+
+            $this->_data = $user[0];
         }
     }
 
@@ -79,19 +86,25 @@ class User implements ModelInterface {
      * @param $user
      * @param $pass
      * @return bool
+     * @throws InvalidRequestException
      */
     public function login($user, $pass)
     {
         // search for the username/password combination
-        $match = $this->store->read('users', [], ['user_logon' => $user, 'active' => true])[0];
+        $match = $this->store->read('users', [], ['user_logon' => $user]);
 
-        if((bool)$match) {
-            // if a match is found, then assign the user details
-            $this->_data = $match;
-            return password_verify($pass, $match['user_secret']);
+        if(!(bool)$match) {
+            throw new InvalidRequestException("Invalid login credentials", 401);
         }
 
-        return false;
+        // if a match is found, then assign the user details
+        $this->_data = $match[0];
+        $loggedIn = password_verify($pass, $this->_data['user_secret']);
+        if(!$loggedIn) {
+            throw new InvalidRequestException("Invalid login credentials", 401);
+        }
+
+        return true;
     }
 
     /**
@@ -141,11 +154,16 @@ class User implements ModelInterface {
      */
     public function save()
     {
-        if(!$this->saved()) {
+        // if no ID is set, then it doesn't exist in the database
+        if(!isset($this->_data['id']) || $this->_data['id'] === null) {
             return $this->store->create($this);
         }
+        if(!$this->saved()) {
+            return $this->store->update($this);
+        }
 
-        return $this->store->update($this);
+        // if it is saved, then we can just return true
+        return true;
     }
 
     /**
@@ -198,6 +216,14 @@ class User implements ModelInterface {
     public function __set($key, $value)
     {
         return $this->_data[$key] = $value;
+    }
+
+    /**
+     *
+     */
+    public function __destruct()
+    {
+        $this->store->close();
     }
 
 } 

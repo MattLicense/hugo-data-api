@@ -382,7 +382,10 @@ class Query {
                 throw new InvalidQueryException("Invalid Query type given", 500);
         }
 
-        return $this->query = $query;
+        $this->query = $query;
+        $this->log->debug($query);
+
+        return $this->query;
     }
 
     /**

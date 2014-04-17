@@ -8,9 +8,10 @@
 
 namespace Hugo\Data\OAuth\Token;
 
-use Hugo\Data\Model\User;
-use Hugo\Data\Storage\DataSource;
-use Hugo\Data\Exception\InvalidTokenException;
+use Hugo\Data\Exception\InvalidRequestException;
+use Hugo\Data\Model\User,
+    Hugo\Data\Storage\DataSource,
+    Hugo\Data\Exception\InvalidTokenException;
 
 /**
  * Class Bearer
@@ -43,7 +44,7 @@ class Bearer implements TokenTypeInterface {
      * Lookup relating user roles to OAuth scope
      * @var array
      */
-    private $scope = [
+    public $scope = [
         '1'   => 'report:all client:all',
         '2'   => 'report:all client:all auth:all'
     ];
@@ -96,10 +97,12 @@ class Bearer implements TokenTypeInterface {
      */
     public function verifyToken($token, $controller)
     {
-        $tokenFromStore = $this->store->read('token', [], ['token' => $token])[0];
-        if(!(bool)$tokenFromStore) {
-            return false;
+        $tokens = $this->store->read('token', [], ['token' => $token]);
+        if(!(bool)$tokens) {
+            throw new InvalidRequestException("Invalid authorization token.", 401);
         }
+
+        $tokenFromStore = $tokens[0];
 
         // check the expiry of the token
         $expiry = isset($tokenFromStore['expires']) ? new \DateTime($tokenFromStore['expires']) : false;
@@ -107,13 +110,13 @@ class Bearer implements TokenTypeInterface {
         $date = new \DateTime();
         if((bool)$expiry && $date > $expiry) {
             $this->delete();
-            return false;
+            throw new InvalidRequestException("Token has expired, please log in to generate a new one.", 401);
         }
 
         // check the scope of the token
-        $scope = $tokenFromStore['scope'];
+        $scope = $this->scope[$tokenFromStore['scope']];
         if(strpos($scope, $controller) === false) {
-            return false;
+            throw new InvalidRequestException("You don't have permission to access this resource.", 403);
         }
 
         return $this->updateExpiry();
@@ -185,11 +188,16 @@ class Bearer implements TokenTypeInterface {
      */
     public function save()
     {
-        if($this->saved()) {
+        // if no ID is set, then it doesn't exist in the database
+        if(!isset($this->_data['id']) || $this->_data['id'] === null) {
             return $this->store->create($this);
         }
+        if(!$this->saved()) {
+            return $this->store->update($this);
+        }
 
-        return $this->store->update($this);
+        // if it is saved, then we can just return true
+        return true;
     }
 
     /**

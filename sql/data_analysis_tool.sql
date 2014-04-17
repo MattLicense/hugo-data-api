@@ -106,7 +106,7 @@ DROP TABLE IF EXISTS `hugo_reports`.`report_metadata`;
 CREATE  TABLE IF NOT EXISTS `hugo_reports`.`report_metadata` (
   `id` VARCHAR(45) NOT NULL ,
   `client_id` INT NOT NULL ,
-  `report_order` TEXT NOT NULL ,
+  `report_order` TEXT ,
   `report_about` TEXT NOT NULL ,
   `published` TINYINT(1) NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`id`) ,
@@ -178,11 +178,13 @@ CREATE  TABLE IF NOT EXISTS `hugo_geography`.`local_authority` (
 CREATE USER 'hugo'@'%' IDENTIFIED BY 'D0ubl3th1nk!';
 GRANT ALL PRIVILEGES ON hugo_oauth.* TO 'hugo'@'%';
 GRANT ALL PRIVILEGES ON hugo_reports.* TO 'hugo'@'%';
+GRANT FILE ON *.* TO 'hugo'@'%'; /* FILE is a separate, global permission */
 GRANT ALL PRIVILEGES ON hugo_geography.* TO 'hugo'@'%';
 
 CREATE USER 'hugo'@'localhost' IDENTIFIED BY 'D0ubl3th1nk!';
 GRANT ALL PRIVILEGES ON hugo_oauth.* TO 'hugo'@'localhost';
 GRANT ALL PRIVILEGES ON hugo_reports.* TO 'hugo'@'localhost';
+GRANT FILE ON *.* TO 'hugo'@'localhost';  /* FILE is a separate, global permission */
 GRANT ALL PRIVILEGES ON hugo_geography.* TO 'hugo'@'localhost';
 
 FLUSH PRIVILEGES;

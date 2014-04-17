@@ -57,7 +57,6 @@ class AuthServer {
     public function verifyAccessRequest(Request $request)
     {
         $authHeader = explode(' ', $request->headers->get("Authorization"));
-        $this->log->debug("Auth header given: {auth}", ['auth' => $request->headers->get("Authorization")]);
 
         // check for Basic authorisation
         if($authHeader[0] !== "Basic") {
@@ -95,11 +94,17 @@ class AuthServer {
                 $this->token = new Bearer(new MySQL(['db' => 'hugo_oauth', 'table' => 'token']));
                 break;
             default:
-                $this->log->error("Attempted unsupported type of HTTP Authorization: {auth}", ['auth' => $authHeader[0]]);
-                throw new \InvalidArgumentException("{$authHeader[0]} Authorization is not supported for this end point", 405);
+                $header = trim($authHeader[0]);
+                $this->log->error("Attempted unsupported type of HTTP Authorization: {auth}", ['auth' => $header]);
+                throw new \InvalidArgumentException("{$header} Authorization is not supported for this end point", 405);
         }
 
         return $this->token->verifyToken($authHeader[1], $controller);
+    }
+
+    public function hasToken(Request $request)
+    {
+        $authHeader = explode(' ', $request->headers->get("Authorization"));
     }
 
     /**
@@ -163,6 +168,12 @@ class AuthServer {
     public function getToken()
     {
         return $this->token;
+    }
+
+    public function __destruct()
+    {
+        $store = $this->config['store'];
+        $store->close();
     }
 
 }

@@ -63,25 +63,25 @@ class API implements AppInterface, RouterInterface
     {
         try {
             $response = $this->router->route($request);
-            $response->headers->add([
-                'Access-Control-Allow-Origin' => 'http://dev.data.hugowolferton.co.uk',
-                'Access-Control-Allow-Credentials' => true,
-                'Access-Control-Allow-Methods' => 'GET, POST, PUT, DELETE, OPTIONS'
-            ]);
         } catch(\Exception $e) {
             $code = ($e->getCode() < 200 || $e->getCode() > 510) ? 500 : $e->getCode();    // make sure that the exception code is a valid HTTP code
             $this->log->error(get_class($e). ' ['. $code .'] - ' . $e->getMessage());
-            $response = new Response(json_encode([  'error' => $e->getMessage(),
-                                                    'response-code' => $code,
-                                                    'exception' => get_class($e)], JSON_PRETTY_PRINT),
-                                     $code,
-                                     [
-                                         'Content-Type' => 'application/json;charset=utf-8',
-                                         'Access-Control-Allow-Origin' => '*',
-                                         'Access-Control-Allow-Credentials' => true,
-                                         'Access-Control-Allow-Methods' => 'GET, POST, PUT, DELETE, OPTIONS'
-                                     ]);
+            $response = new Response(
+                json_encode([
+                    'error' => $e->getMessage(),
+                    'response-code' => $code,
+                    'exception' => get_class($e)
+                ], JSON_PRETTY_PRINT),
+                $code
+            );
         }
+
+        $response->headers->add([
+            'Content-Type' => 'application/json;charset=utf-8',
+            'Access-Control-Allow-Origin' => '*',
+            'Access-Control-Allow-Credentials' => true,
+            'Access-Control-Allow-Methods' => 'GET, POST, PUT, DELETE, OPTIONS'
+        ]);
 
         return $response;
     }

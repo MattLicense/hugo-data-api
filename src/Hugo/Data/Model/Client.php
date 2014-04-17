@@ -104,11 +104,16 @@ class Client implements ModelInterface {
      */
     public function save()
     {
-        if(!$this->saved()) {
+        // if no ID is set, then it doesn't exist in the database
+        if(!isset($this->_data['id']) || $this->_data['id'] === null) {
             return $this->store->create($this);
         }
+        if(!$this->saved()) {
+            return $this->store->update($this);
+        }
 
-        return $this->store->update($this);
+        // if it is saved, then we can just return true
+        return true;
     }
 
     /**
@@ -121,11 +126,11 @@ class Client implements ModelInterface {
 
     /**
      * @param array $attr
-     * @return mixed
+     * @return array
      */
     public function set(array $attr)
     {
-        return array_merge($this->_data, $attr);
+        return $this->_data = array_merge($attr, $this->_data);
     }
 
     /**
@@ -161,6 +166,14 @@ class Client implements ModelInterface {
     public function __set($key, $value)
     {
         return $this->_data[$key] = $value;
+    }
+
+    /**
+     *
+     */
+    public function __destruct()
+    {
+        $this->store->close();
     }
 
 } 

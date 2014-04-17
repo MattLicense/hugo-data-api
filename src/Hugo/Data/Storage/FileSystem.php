@@ -50,7 +50,7 @@ class FileSystem implements DataSource
      * @param ModelInterface $model
      * @return bool
      */
-    public function create(ModelInterface $model)
+    public function create(ModelInterface &$model)
     {
         $file = new \SplFileObject($this->file, 'w');
         return (null === $file->fwrite((string)$model)) ? false : true;

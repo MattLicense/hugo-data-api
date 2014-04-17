@@ -1,13 +1,13 @@
 USE `hugo_oauth`;
 
-INSERT INTO `user_roles` (`id`, `user_role`) VALUES ('1', 'editor'), ('2', 'administrator');
-INSERT INTO `token_type` (`id`, `token_type`) VALUES ('1', 'bearer');
+INSERT INTO `user_roles` (`id`, `user_role`) VALUES ('1', 'Editor'), ('2', 'Administrator');
+INSERT INTO `token_type` (`id`, `token_type`) VALUES ('1', 'Bearer');
 
 /* Test user based on Docs */
-/* Password hash created via password_hash('secretPassword', PASSWORD_BCRYPT); */
+/* Password hash created via password_hash('secretPassword', PASSWORD_BCRYPT); password_hash('securePassword', PASSWORD_BCRYPT); */
 INSERT INTO `users` (`id`, `user_name`, `user_logon`, `user_secret`, `active`, `user_role`)
           VALUES    ('1', 'Anna Edwards', 'a.edwards', '$2y$10$Wd6D0PRfcs6I256zcfhr0ux7mjOOCDUvYEclIu.PD9oDFG2mr7216', true, '2'),
-                    ('2', 'John Scott', 'j.scott', '$2y$10$9gWHdvzFAepBFvx.Kki0k.82SS3eK6HLp..bnX7rkAUUjFizMe9Ny', true, '1');
+                    ('2', 'John Scott', 'j.scott', '$2y$10$413egl88UVEMK5LKrYzWo.fJsd8mDvriTTuupBHWIBdtMeE1PReXy', true, '1');
 
 USE `hugo_reports`;
 INSERT INTO `clients` (`id`, `client_name`, `client_website`, `contact_name`, `contact_email`, `contact_phone`)

@@ -31,9 +31,11 @@ class ReportController extends AbstractController {
     public function getIndex($id = null)
     {
         if(null === $id) {
-            $response = Report::listArray(new MySQL(['db' => 'hugo_reports', 'table' => 'report_metadata']));
+            $authServer = new AuthServer();
+            $authServer->hasToken($this->request) ? $showAll = true : $showAll = false;
+            $response = Report::listArray(new MySQL(['db' => 'hugo_reports', 'table' => 'report_metadata']), $showAll);
         } else {
-            $report = new Report(new MySQL(['db' => 'hugo_reports', 'table' => $id]));
+            $report = new Report(new MySQL(['db' => 'hugo_reports', 'table' => $id]), $id);
             $reportArray = $report->toArray();
 
             // get the client id so we can return an array of the client details instead of the id
@@ -42,10 +44,10 @@ class ReportController extends AbstractController {
             $client = new Client(new MySQL(['db' => 'hugo_reports', 'table' => 'clients']), $clientId);
             $reportArray['client'] = $client->toArray();
 
-            $response = $reportArray + ['report-data' => $report->getReportDataArray()];
+            $response = $reportArray + ['report_data' => $report->getReportDataArray()];
         }
 
-        return new Response(json_encode($response, JSON_PRETTY_PRINT),
+        return new Response(json_encode($response, JSON_NUMERIC_CHECK),
                             Constants::HTTP_OK,
                             ['Content-Type' => Constants::CONTENT_TYPE]);
     }
@@ -69,7 +71,7 @@ class ReportController extends AbstractController {
 
         if(is_null($file)) {
             $this->log->error("No file uploaded using POST /report/");
-            throw new InvalidRequestException("No file uploaded using POST /report/", Constants::HTTP_UNSUPPORTED_MEDIA);
+            throw new InvalidRequestException("No file uploaded", Constants::HTTP_UNSUPPORTED_MEDIA);
         }
 
         $csv = $file->move('/media/vagrant/www/api.hugowolferton.co.uk/uploads/', $file->getClientOriginalName());
@@ -83,13 +85,13 @@ class ReportController extends AbstractController {
         $report->processFile(
             $csv->openFile(),   // sends an \SplFileObject to be processed
             [
-                'id'           => $this->request->get('id'),
-                'client_id'    => $this->request->get('client_id'),
-                'report_about' => $this->request->get('report_about')
+                'id'           => $this->request->request->get('id'),
+                'client_id'    => $this->request->request->get('client_id'),
+                'report_about' => $this->request->request->get('report_about')
             ]
         );
 
-        return new Response(json_encode($report->toArray() + ['report-data' => $report->getReportDataArray()], JSON_PRETTY_PRINT),
+        return new Response(json_encode($report->toArray() + ['report_data' => $report->getReportDataArray()], JSON_NUMERIC_CHECK),
                             Constants::HTTP_OK,
                             ['Content-Type' => Constants::CONTENT_TYPE]);
     }
@@ -112,27 +114,21 @@ class ReportController extends AbstractController {
 
         $report = new Report(new MySQL(['db' => 'hugo_reports', 'table' => 'report_metadata']), $id);
 
-        // check to see if the report exists
-        if(!$report->saved()) {
-            $this->log->error("Attempted to update invalid report id {id}", ['id' => $id]);
-            throw new InvalidRequestException("No report with ID {$id} found", Constants::HTTP_NOT_FOUND);
-        }
-
         // check to see if a file was uploaded, if so update the report data
-        $file = $this->request->files->get('csv');
+        $file = $this->request->files->get('csv', false);
         if((bool)$file) {
             $report->updateData($file->openFile());
         }
 
         // Check to see if the metadata fields have been sent in the request, otherwise use the current value
-        $about = !is_null($this->request->request->get('report-about')) ? $this->request->request->get('report-about') : $report->report_about;
-        $client = !is_null($this->request->request->get('client-id')) ? $this->request->request->get('client-id') : $report->client_id;
-        $published = !is_null($this->request->request->get('published')) ? $this->request->request->get('published') : $report->published;
-        $order = !is_null($this->request->request->get('report-order')) ? $this->request->request->get('report-order') : $report->order;
+        $about = !is_null($this->request->request->get('report_about')) ? $this->request->request->get('report_about') : $report->report_about;
+        $client = !is_null($this->request->request->get('client_id')) ? $this->request->request->get('client_id') : $report->client_id;
+        $published = !is_null($this->request->request->get('published')) ? (bool)$this->request->request->get('published') : $report->published;
+        $order = $this->request->request->get('report_order');
 
         if(!$report->checkValidOrder($order)) {
             $this->log->error("Invalid order sent with PUT /report/");
-            throw new InvalidRequestException("Invalid order sent with request. Please ensure it is valid JSON and contains all columns", Constants::HTTP_BAD_REQ);
+            throw new InvalidRequestException("Invalid order sent with request. Please ensure it is valid JSON", Constants::HTTP_BAD_REQ);
         }
 
         $report->set([
@@ -147,7 +143,7 @@ class ReportController extends AbstractController {
             throw new \Exception("There was an error saving the report, please check logs", Constants::HTTP_SERVER_ERROR);
         }
 
-        return new Response(json_encode($report->toArray() + ['report-data' => $report->getReportDataArray()], JSON_PRETTY_PRINT),
+        return new Response(json_encode($report->toArray() + ['report_data' => $report->getReportDataArray()], JSON_NUMERIC_CHECK),
                             Constants::HTTP_OK,
                             ['Content-Type' => Constants::CONTENT_TYPE]);
     }
@@ -181,7 +177,7 @@ class ReportController extends AbstractController {
             throw new \Exception("Error deleting report {$id}", Constants::HTTP_SERVER_ERROR);
         }
 
-        return new Response(json_encode(['success' => 'Report ' . $id . ' deleted'], JSON_PRETTY_PRINT),
+        return new Response(json_encode(['success' => 'Report ' . $id . ' deleted'], JSON_NUMERIC_CHECK),
                             Constants::HTTP_OK,
                             ['Content-Type' => Constants::CONTENT_TYPE]);
     }
