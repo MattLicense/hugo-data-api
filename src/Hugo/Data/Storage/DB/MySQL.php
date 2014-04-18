@@ -137,7 +137,7 @@ class MySQL implements DBInterface
             $this->log->error("INSERT query failed: {error}", ['error' => json_encode($statement->errorInfo())]);
         }
 
-        $model->set(['id' => $this->getLatestId()]);
+        $model->id = $this->getLatestId();
 
         return $exec;
     }
