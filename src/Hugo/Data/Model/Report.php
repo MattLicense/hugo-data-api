@@ -75,7 +75,7 @@ class Report implements ModelInterface {
             $reportFromStore = $this->store->read('report_metadata', [], ['id' => $id]);
             $this->store->close();
 
-            if(!(bool)$reportFromStore) {
+            if(count($reportFromStore) != 1) {
                 $this->log->error("No report with id {id} found in store", ['id' => $id]);
                 throw new InvalidQueryException("No report exists with id {$id}", 404);
             }
@@ -130,7 +130,7 @@ class Report implements ModelInterface {
 
         // @todo: when the query executes, the files are still busy so can't be deleted.
         // if the query executed correctly, then we can delete the CSV files from the server
-        if($query->exec()) {
+        if($exec = $query->exec()) {
             //unlink($strippedFile->getRealPath());
             //unlink($file->getRealPath());
         }
@@ -285,13 +285,13 @@ class Report implements ModelInterface {
         if(!isset($this->_data['columns'])) {
             $pdo = new \PDO("mysql:host=localhost;dbname=hugo_reports", "hugo", "D0ubl3th1nk!");
             $query = $pdo->query("DESCRIBE " . $this->_data['id']);
-            $this->_data['columns'] = $query->fetchAll(\PDO::FETCH_COLUMN);
+            $this->_data['columns'] = !(bool)$query ? [] : $query->fetchAll(\PDO::FETCH_COLUMN);
         }
 
         if(!isset($this->_data['data'])) {
             $pdo = new \PDO("mysql:host=localhost;dbname=hugo_reports", "hugo", "D0ubl3th1nk!");
             $query = $pdo->query("SELECT * FROM `" . $this->_data['id'] . "`");
-            $this->_data['data'] = $query->fetchAll(\PDO::FETCH_NUM);
+            $this->_data['data'] = !(bool)$query ? [] : $query->fetchAll(\PDO::FETCH_NUM);
         }
     }
 

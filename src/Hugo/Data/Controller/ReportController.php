@@ -166,12 +166,6 @@ class ReportController extends AbstractController {
 
         $report = new Report(new MySQL(['db' => 'hugo_reports', 'table' => 'report_metadata']), $id);
 
-        // check to see if the report exists
-        if(!$report->saved()) {
-            $this->log->error("Attempted to update invalid report id {id}", ['id' => $id]);
-            throw new InvalidRequestException("No report with ID {$id} found", Constants::HTTP_NOT_FOUND);
-        }
-
         if(!$report->delete()) {
             $this->log->error("Error deleting report {id}", ['id' => $id]);
             throw new \Exception("Error deleting report {$id}", Constants::HTTP_SERVER_ERROR);

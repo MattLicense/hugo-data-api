@@ -188,6 +188,10 @@ class MySQL implements DBInterface
         $modelArray = $model->toArray();
         $query = $this->generateUpdateQuery($this->config['table'], $modelArray, ['id' => $model->id]);
 
+        if(is_null($this->pdo)) {
+            $this->connect($this->dsn);
+        }
+
         $statement = $this->pdo->prepare($query);
         $this->log->debug($statement->queryString);
         $exec = $statement->execute($modelArray + ['id' => $model->id]);
@@ -211,11 +215,15 @@ class MySQL implements DBInterface
             throw new InvalidQueryException("No model provided to delete");
         }
 
+        if(is_null($this->pdo)) {
+            $this->connect($this->dsn);
+        }
+
         $query = $this->generateDeleteQuery($this->config['table'], ['id' => $model->id]);
 
         $statement = $this->pdo->prepare($query);
         $this->log->debug($statement->queryString);
-        $exec = $statement->execute(['id' => (int)$model->id]);
+        $exec = $statement->execute(['id' => $model->id]);
 
         if(!$exec) {
             $this->log->error("DELETE query failed: {error}", ['error' => json_encode($statement->errorInfo())]);
