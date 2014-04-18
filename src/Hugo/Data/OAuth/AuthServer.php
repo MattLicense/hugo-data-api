@@ -104,7 +104,11 @@ class AuthServer {
 
     public function hasToken(Request $request)
     {
-        $authHeader = explode(' ', $request->headers->get("Authorization"));
+        try {
+            return $this->verifyRequest($request);
+        } catch(\InvalidArgumentException $e) {
+            return false;
+        }
     }
 
     /**
