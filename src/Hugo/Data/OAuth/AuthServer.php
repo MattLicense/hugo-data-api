@@ -82,6 +82,11 @@ class AuthServer {
      */
     public function verifyRequest(Request $request)
     {
+        if($request->headers->get("Authorization") === null) {
+            $this->log->error("Attempted to access {path} without Authorization header", ['path' => $request->getPathInfo()]);
+            throw new \InvalidArgumentException("Authorization is required for this end point", 401);
+        }
+
         $authHeader = explode(' ', $request->headers->get("Authorization"));
 
         // token scope references controller sections

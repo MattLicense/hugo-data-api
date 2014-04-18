@@ -22,6 +22,25 @@ use Hugo\Data\Model\User,
 class AuthController extends AbstractController {
 
     /**
+     * GET /auth/checktoken
+     *
+     * @return Response
+     * @throws \Hugo\Data\Exception\InvalidRequestException
+     */
+    public function getChecktoken()
+    {
+        $authServer = new AuthServer();
+        if(!$authServer->verifyRequest($this->request)) {
+            $this->log->error("Unauthorised request from {ip}", ['ip' => $this->request->getClientIp()]);
+            throw new InvalidRequestException("Invalid authorization token provided in headers", Constants::HTTP_UNAUTHORISED);
+        }
+
+        return new Response(json_encode($authServer->getToken()->toArray(), JSON_PRETTY_PRINT),
+                            Constants::HTTP_OK,
+                            ['Content-Type' => Constants::CONTENT_TYPE]);
+    }
+
+    /**
      * POST /auth/token/
      *
      * @return Response
@@ -38,6 +57,10 @@ class AuthController extends AbstractController {
         $token = $authServer->generateToken('bearer');
         $tokenArray = $token->toArray();
         $tokenArray['scope'] = $token->scope[$tokenArray['scope']];
+
+        $user = new User(new MySQL(['db' => 'hugo_oauth', 'table' => 'users']), $tokenArray['user_id']);
+        unset($tokenArray['user_id']);
+        $tokenArray['user'] = $user->user_logon;
 
         return new Response(json_encode($tokenArray, JSON_PRETTY_PRINT),
                             Constants::HTTP_OK,

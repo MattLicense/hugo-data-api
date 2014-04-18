@@ -22,6 +22,7 @@
                 <li><a href="#getUser">GET /auth/user/</a></li>
                 <li><a href="#getUserId">GET /auth/user/{id}</a></li>
                 <li><a href="#postToken">POST /auth/token/</a></li>
+                <li><a href="#getCheckToken">GET /auth/checktoken</a></li>
                 <li><a href="#deleteToken">DELETE /auth/token/</a></li>
                 <li><a href="#postReport">POST /report/</a></li>
                 <li><a href="#putReport">PUT /report/{id}</a></li>
@@ -203,6 +204,29 @@ Content-Encoding: gzip
                 <td>✓</td>
             </tr>
         </table>
+        </section>
+
+        <section class="method">
+            <h2 id="getCheckToken">GET /auth/checktoken/</h2>
+            <p>Used to check the validity of a token.</p>
+            <p><strong>Example Request</strong></p>
+<pre><code class="http">GET /auth/checktoken/ HTTP/1.1
+Host: api.hugowolferton.co.uk
+Authorization: Bearer 8106a2ae5c03ed123633586955ea6a508754a875e769892c
+</code></pre>
+            <p><strong>Example Response</strong></p>
+<pre><code class="javascript">HTTP/1.1 200 OK
+Status: 200 OK
+Content-Type: application/json;charset=utf-8
+Content-Encoding: gzip
+
+{
+    'token_type': '1',
+    'user_id': '1',
+    'token': '8106a2ae5c03ed123633586955ea6a508754a875e769892c',
+    'expires': '2013-11-13 17:43:32',
+    'scope': 'report:all client:all user:all'
+}</code></pre>
         </section>
 
         <section class="method">
