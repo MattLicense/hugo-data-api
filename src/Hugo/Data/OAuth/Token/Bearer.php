@@ -94,6 +94,7 @@ class Bearer implements TokenTypeInterface {
      * @param $token
      * @param $controller
      * @return bool
+     * @throws \Hugo\Data\Exception\InvalidRequestException
      */
     public function verifyToken($token, $controller)
     {
