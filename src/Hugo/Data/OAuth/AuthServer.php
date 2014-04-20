@@ -93,8 +93,7 @@ class AuthServer {
         $pathArray = explode('/', trim($request->getPathInfo(), '/'));
         $controller = array_shift($pathArray);  // first part of URI should be the controller
 
-        $tokenFactory = new TokenFactory(new MySQL(['db' => 'hugo_oauth', 'table' => 'token']));
-        $this->token = $tokenFactory->getToken($authHeader[0]);
+        $this->token = $this->tokenFactory->getToken($authHeader[0]);
 
         return $this->token->verifyToken($authHeader[1], $controller);
     }
