@@ -98,6 +98,10 @@ class AuthServer {
         return $this->token->verifyToken($authHeader[1], $controller);
     }
 
+    /**
+     * @param Request $request
+     * @return bool
+     */
     public function hasToken(Request $request)
     {
         try {
