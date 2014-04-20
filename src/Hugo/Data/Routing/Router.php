@@ -46,7 +46,8 @@ class Router implements RouterInterface {
     }
 
     /**
-     * Calls the function matched to the route, either via a defined route a ControllerInterface
+     * Calls the function matched to the route, either via a defined route in the private $routes array
+     * or by using the ControllerFactory to attempt to match the request to a controller
      *
      * @param Request $request
      * @return Response
