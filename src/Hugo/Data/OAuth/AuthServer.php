@@ -93,16 +93,8 @@ class AuthServer {
         $pathArray = explode('/', trim($request->getPathInfo(), '/'));
         $controller = array_shift($pathArray);  // first part of URI should be the controller
 
-        switch(strtolower($authHeader[0])) {
-            case 'bearer':
-                $this->log->info("Attempting to authenticate bearer token: {token}", ['token' => $authHeader[1]]);
-                $this->token = new Bearer(new MySQL(['db' => 'hugo_oauth', 'table' => 'token']));
-                break;
-            default:
-                $header = trim($authHeader[0]);
-                $this->log->error("Attempted unsupported type of HTTP Authorization: {auth}", ['auth' => $header]);
-                throw new \InvalidArgumentException("{$header} Authorization is not supported for this end point", 405);
-        }
+        $tokenFactory = new TokenFactory(new MySQL(['db' => 'hugo_oauth', 'table' => 'token']));
+        $this->token = $tokenFactory->getToken($authHeader[0]);
 
         return $this->token->verifyToken($authHeader[1], $controller);
     }

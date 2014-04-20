@@ -33,7 +33,7 @@ class TokenFactory {
      * @return TokenTypeInterface
      * @throws \Hugo\Data\Exception\InvalidTokenException
      */
-    public function getToken($type, User $user)
+    public function getToken($type, User $user = null)
     {
         switch(strtolower($type)) {
             case 'bearer':
@@ -43,7 +43,10 @@ class TokenFactory {
                 throw new InvalidTokenException("Token type {$type} not implemented", 501);
         }
 
-        $token->setUser($user);
+        if($token != null) {
+            $token->setUser($user);
+        }
+        
         return $token;
     }
 
