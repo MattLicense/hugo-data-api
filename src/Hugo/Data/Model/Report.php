@@ -200,8 +200,10 @@ class Report implements ModelInterface {
         if(is_array($order)) {
             $order = json_encode($order);
             return true;
-        } else if(json_decode($order) == null) {
+        } elseif(json_decode($order) == null) {
             return false;
+        } else {
+            return true;
         }
     }
 
