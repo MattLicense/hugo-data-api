@@ -43,7 +43,7 @@ class TokenFactory {
                 throw new InvalidTokenException("Token type {$type} not implemented", 501);
         }
 
-        if($token != null) {
+        if($user !== null) {
             $token->setUser($user);
         }
         
