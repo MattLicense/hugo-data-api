@@ -8,10 +8,10 @@
 
 namespace Hugo\Data\OAuth\Token;
 
-use Hugo\Data\Exception\InvalidRequestException;
 use Hugo\Data\Model\User,
     Hugo\Data\Storage\DataSource,
-    Hugo\Data\Exception\InvalidTokenException;
+    Hugo\Data\Exception\InvalidTokenException,
+    Hugo\Data\Exception\InvalidRequestException;
 
 /**
  * Class Bearer
@@ -51,11 +51,19 @@ class Bearer implements TokenTypeInterface {
 
     /**
      * @param DataSource $store
-     * @param null $id
+     * @param null $token
+     * @throws \Hugo\Data\Exception\InvalidTokenException
      */
-    public function __construct(DataSource $store, $id = null)
+    public function __construct(DataSource $store, $token = null)
     {
         $this->store = $store;
+        if(null !== $token) {
+            $tokenFromStore = $this->store->read('token', [], ['token' => $token]);
+            if(count($tokenFromStore) !== 1) {
+                throw new InvalidTokenException("No token {$token} found.");
+            }
+            $this->_data = $tokenFromStore[0];
+        }
     }
 
     /**
@@ -82,12 +90,15 @@ class Bearer implements TokenTypeInterface {
         $this->_data['scope'] = $this->user->user_role;
 
         // check if the user already has a token assigned
-        if($token = $this->store->read('token', ['id', 'user_id'], ['user_id' => $this->_data['user_id']])[0]) {
-            $this->_data['id'] = $token['id'];
-            return $this->store->update($this);
+        $tokenFromStore = $this->store->read('token', ['id', 'user_id'], ['user_id' => $this->_data['user_id']]);
+        if(!(bool)$tokenFromStore) {
+            return $this->store->create($this);
         }
 
-        return $this->store->create($this);
+        $token = $tokenFromStore[0];
+        $this->_data['id'] = $token['id'];
+        return $this->store->update($this);
+
     }
 
     /**

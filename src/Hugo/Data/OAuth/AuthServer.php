@@ -15,7 +15,8 @@ use Hugo\Data\Model\User,
     Hugo\Data\Application\Logger,
     Hugo\Data\OAuth\Token\TokenFactory,
     Hugo\Data\OAuth\Token\TokenTypeInterface,
-    Symfony\Component\HttpFoundation\Request;
+    Symfony\Component\HttpFoundation\Request,
+    Hugo\Data\Exception\InvalidRequestException;
 
 class AuthServer {
 
@@ -101,14 +102,29 @@ class AuthServer {
     /**
      * @param Request $request
      * @return bool
+     * @throws \Hugo\Data\Exception\InvalidRequestException
+     * @todo Check token type is supported
      */
     public function hasToken(Request $request)
     {
-        try {
-            return $this->verifyRequest($request);
-        } catch(\InvalidArgumentException $e) {
+        $header = $request->headers->get("Authorization");
+
+        // if no Authorization header is found
+        if($header === null) {
             return false;
         }
+
+        $authHeader = explode(' ', $header);
+        $type = $authHeader[0];
+        $token = $authHeader[1];
+
+        $tokenFromStore = $this->config['store']->read('token', [], ['token' => $token]);
+        if(count($tokenFromStore) !== 1) {
+            throw new InvalidRequestException("Invalid access token provided", 401);
+        }
+
+        $this->getTokenFromHeaders($request);
+        return true;
     }
 
     /**
@@ -127,26 +143,29 @@ class AuthServer {
      * @param Request $request
      * @return Token\TokenTypeInterface | null
      * @throws \InvalidArgumentException
+     * @throws \Hugo\Data\Exception\InvalidRequestException
      */
     public function getTokenFromHeaders(Request $request)
     {
-        $authHeader = explode(' ', $request->headers->get("Authorization"));
+        $header = $request->headers->get("Authorization");
+
+        if($header === null) {
+            throw new InvalidRequestException("No Authorization header provided", 400);
+        }
+
+        $authHeader = explode(' ', $header);
         $pathArray = explode('/', trim($request->getPathInfo(), '/'));
         $controller = array_shift($pathArray);
 
         switch(strtolower($authHeader[0])) {
             case 'bearer':
-                $this->token = new Bearer(new MySQL(['db' => 'hugo_oauth', 'table' => 'token']));
+                $this->token = new Bearer(new MySQL(['db' => 'hugo_oauth', 'table' => 'token']), $authHeader[1]);
                 break;
             default:
                 throw new \InvalidArgumentException("{$authHeader[0]} Authorization is not supported for this end point", 405);
         }
 
-        if($this->token->verifyToken($authHeader[1], $controller)) {
-            return $this->token;
-        }
-
-        return null;
+        return $this->token;
     }
 
     /**

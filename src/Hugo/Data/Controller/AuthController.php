@@ -30,7 +30,7 @@ class AuthController extends AbstractController {
     public function getChecktoken()
     {
         $authServer = new AuthServer();
-        if(!$authServer->verifyRequest($this->request)) {
+        if(!$authServer->hasToken($this->request)) {
             $this->log->error("Unauthorised request from {ip}", ['ip' => $this->request->getClientIp()]);
             throw new InvalidRequestException("Invalid authorization token provided in headers", Constants::HTTP_UNAUTHORISED);
         }
@@ -149,6 +149,7 @@ class AuthController extends AbstractController {
 
         $user = new User(new MySQL(['db' => 'hugo_oauth', 'table' => 'users']));
         $user->processParameters($this->request->request);
+        $user->user_secret = password_hash($user->user_secret, PASSWORD_BCRYPT);
 
         // make sure that the user has been saved to the database
         if(!$user->save()) {
@@ -187,14 +188,8 @@ class AuthController extends AbstractController {
         }
 
         $user = new User(new MySQL(['db' => 'hugo_oauth', 'table' => 'users']), $id);
-        $userName       = (bool)$this->request->request->get('user_name') ? $this->request->request->get('user_name') : $user->user_name;
-        $userLogon      = (bool)$this->request->request->get('user_logon') ? $this->request->request->get('user_logon') : $user->user_logon;
-        $userSecret     = (bool)$this->request->request->get('user_secret') ? password_hash($this->request->request->get('user_secret'), PASSWORD_BCRYPT) : $user->user_secret;
-        $userRole       = (bool)$this->request->request->get('user_role') ? $this->request->request->get('user_role') : $user->user_role;
-        $active         = (bool)$this->request->request->get('active');
-
-        // set the user characteristics
-        $user->set(['user_name' => $userName, 'user_logon' => $userLogon, 'user_secret' => $userSecret, 'user_role' => $userRole, 'active' => $active]);
+        $user->processParameters($this->request->request);
+        $user->user_secret = password_hash($user->user_secret, PASSWORD_BCRYPT);
 
         // make sure that the user has been saved to the database
         if(!$user->save()) {
