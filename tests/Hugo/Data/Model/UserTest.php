@@ -34,13 +34,13 @@ class UserTest extends \PHPUnit_Framework_TestCase {
                                 ->getMock();
         $this->mockStore->expects($this->any())
                         ->method('read')
-                        ->will($this->returnValue([
+                        ->will($this->returnValue([[
                             'user_name'     => 'Anna Edwards',
                             'user_logon'    => 'a.edwards',
                             'user_secret'   => '$2y$10$JXEVzXlYNBxwBlc5xovHEegbHX0mpEjtFpt6eZRI.9yCS3Y9ekXq6',
                             'user_role'     => 2,
                             'active'        => true
-                        ]));
+                        ]]));
     }
 
     public function parameterBagSuccess()
@@ -117,7 +117,14 @@ class UserTest extends \PHPUnit_Framework_TestCase {
 
         $user = new User($this->mockStore);
         $this->assertTrue($user->login($username, $password));
+    }
 
+    /**
+     * @expectedException \Hugo\Data\Exception\InvalidRequestException
+     */
+    public function testIncorrectLogin()
+    {
+        $username = 'a.edwards';
         $password = 'thisIsTheWrongPassword';
         $user = new User($this->mockStore);
         $this->assertFalse($user->login($username, $password));
