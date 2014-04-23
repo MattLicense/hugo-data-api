@@ -72,7 +72,7 @@ CREATE  TABLE IF NOT EXISTS `hugo_oauth`.`token` (
   CONSTRAINT unique_user_id UNIQUE (`user_id`) ,
   CONSTRAINT `user_token` FOREIGN KEY (`user_id`)
   REFERENCES `hugo_oauth`.`users` (`id`)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION,
   CONSTRAINT `token_type` FOREIGN KEY (`type`)
   REFERENCES `hugo_oauth`.`token_type` (`id`)
