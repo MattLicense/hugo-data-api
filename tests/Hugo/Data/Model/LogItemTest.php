@@ -11,6 +11,16 @@ namespace Hugo\Data\Model;
 class LogItemTest extends \PHPUnit_Framework_TestCase {
 
     protected $store;
+    
+    public function setUp()
+    {
+        $this->store = $this->getMockBuilder('\\Hugo\\Data\\Storage\\FileSystem', ['write'])
+                            ->disableOriginalConstructor()
+                            ->getMock();
+        $this->store->expects($this->any())
+                    ->method('write')
+                    ->will($this->returnValue(true));
+    }
 
     /**
      * @return array
