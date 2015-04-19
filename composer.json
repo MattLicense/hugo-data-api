@@ -1,11 +1,8 @@
 {
     "require": {
         "psr/log": "*",
-        "symfony/http-foundation": "*"
-    },
-    "require-dev": {
+        "symfony/http-foundation": "*",
         "phpunit/phpunit": "3.7.*",
-        "phpunit/DbUnit": "*"
     },
     "autoload": {
         "psr-0": {
