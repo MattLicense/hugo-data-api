@@ -22,11 +22,6 @@ class QueryTest extends \PHPUnit_Framework_TestCase {
         $this->query = new Query($this->store);
     }
 
-    public function tearDown()
-    {
-        $this->query->resetQuery();
-    }
-
     public function testSelectQueries()
     {
         $selectQuery = $this->query->select('table', [])->where('field', 'value');
