@@ -130,7 +130,7 @@ class LogItem implements ModelInterface {
             $replace['{'.$key.'}'] = $value;
         }
 
-        return strtr($message, $replace);
+        return strtr((string)($message), $replace);
     }
 
     public function __get($key)
