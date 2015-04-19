@@ -134,7 +134,7 @@ class LogItem implements ModelInterface {
             $message = $message->format('Y-m-d H:i:s');
         }
 
-        return strtr((string)($message), $replace);
+        return strtr($message, $replace);
     }
 
     public function __get($key)
