@@ -123,9 +123,9 @@ class LogItem implements ModelInterface {
      * @param array $context
      * @return string
      */
-    private function interpolate($message, array $context = [])
+    private function interpolate($message, array $context = array())
     {
-        $replace = [];
+        $replace = array();
         foreach ($context as $key => $value) {
             if($value instanceof \DateTime) {
                 $value = $value->format('Y-m-d H:i:s');
