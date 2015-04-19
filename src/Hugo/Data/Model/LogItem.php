@@ -127,6 +127,10 @@ class LogItem implements ModelInterface {
     {
         $replace = [];
         foreach ($context as $key => $value) {
+            if($value instanceof \DateTime) {
+                $value = $value->format('Y-m-d H:i:s');
+            }
+            
             $replace['{'.$key.'}'] = $value;
         }
         
