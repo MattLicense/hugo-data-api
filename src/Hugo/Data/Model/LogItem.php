@@ -137,6 +137,9 @@ class LogItem implements ModelInterface {
         if($message instanceof \DateTime) {
             $message = $message->format('Y-m-d H:i:s');
         }
+        if(is_array($message)) {
+            $message = implode(' ', $message);
+        }
 
         return strtr($message, $replace);
     }
